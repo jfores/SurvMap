@@ -8,9 +8,10 @@ Authors@R:
            email = "fores.martos.jaume@gmail.com",
            comment = c(ORCID = "https://orcid.org/0000-0002-9025-4877"))
 Description: This package is desiigned to carry out Mapper-based survival analsis.
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
+Imports: 
+    stats

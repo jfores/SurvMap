@@ -2,12 +2,11 @@
 
 #' Computes lambda
 #'
-#'
-#' Computes the value of lambda as defined in: The Optimal Hard Thresholdfor Singular Values is \deqn{\sqrt(4/ 3)}
+#' Computes the value of lambda as defined in: The Optimal Hard Threshold for Singular Values is \eqn{\sqrt(4/ 3)}
 #'
 #' @param bet numeric
 #'
-#' @return numeric
+#' @return A numeric lambda value
 #' @export
 #'
 #' @examples
@@ -19,16 +18,40 @@ get_lambda <- function(bet){
 }
 
 
+#' Marcenko-Pastur distribution to integrate.
+#'
+#' This function is an auxiliary function includes  the marcenco-pastur function that was to be integrated to find the upper integration bound that produces and area of 1/2.
+#'
+#' @param t Parameter t
+#' @param bet Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.
+#'
+#' @return
+#' @export
+#'
+#' @examples fun_to_int(1,0.3)
 fun_to_int <- function(t,bet){
   b_p <- (1 + sqrt(bet))^2
   b_m <- (1 - sqrt(bet))^2
   numerator <- sqrt((b_p - t)*(t - b_m))
-  denominator <- 2*pi*t*bet
+  denominator <- 2*pgi*t*bet
   res <- numerator/denominator
   return(res)
 }
 
 
+#' Get mu_beta
+#'
+#' This function identifies the upper integration bound of the Marcenko-Pastur distribution. It explores 100 values in a given interval. The selects the values clusest to 1/2 on the left and right. As the upper integration boued
+#' if the distance between the left and right approximations is lower than a given threshold 1e-10 it converges and the upper bound producing an area of 1/2 is defined as the average of the left and right
+#' approximations.
+#'
+#' @param bet Beta value. Aspect ratio of the input matrix.  \deqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.
+#'
+#' @return Returns the mu beta value. This is the upper limit of integration where the Marcenko-Pastur distribution is equal to 1/2.
+#' @export
+#'
+#' @examples
+#' get_mu_beta(0.3)
 get_mu_beta <- function(bet){
   thresh_diff <- 1e-10
   lbond <- (1 - sqrt(bet))^2
@@ -40,7 +63,7 @@ get_mu_beta <- function(bet){
     #print(counter)
     values_int <- c()
     for (i in 1:length(seqvals)){
-      res <- integrate(fun_to_int,lbond,seqvals[i],bet)$value
+      res <- stats::integrate(fun_to_int,lbond,seqvals[i],bet)$value
       values_int <- c(values_int,res)
     }
     if(abs(max(values_int[values_int < 0.5]) - 0.5) < thresh_diff & abs(min(values_int[values_int > 0.5]) - 0.5) < thresh_diff){
@@ -56,6 +79,16 @@ get_mu_beta <- function(bet){
 }
 
 
+#' Compute omega
+#'
+#' Computes the omega value as described in Add reference.
+#'
+#' @param bet Beta value. Aspect ratio of the input matrix.  \deqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.
+#'
+#' @return omega. Returnes the omega value.
+#' @export
+#'
+#' @examples get_omega(0.3)
 get_omega <- function(bet){
   lamb <- get_lambda(bet)
   mu_beta <- get_mu_beta(bet)
