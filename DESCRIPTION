@@ -1,13 +1,13 @@
 Package: SurvMap
-Title: What the Package Does (One Line, Title Case)
+Title: Mapper Survival Analysis of Transcriptomic Data
 Version: 0.0.0.9000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Jaume",
+           family = "Forés",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
+           email = "fores.martos.jaume@gmail.com",
+           comment = c(ORCID = "https://orcid.org/0000-0002-9025-4877"))
+Description: This package is desiigned to carry out Mapper-based survival analsis.
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
     license
 Encoding: UTF-8

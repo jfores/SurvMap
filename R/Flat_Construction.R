@@ -1,3 +1,17 @@
+
+
+#' Computes lambda
+#'
+#'
+#' Computes the value of lambda as defined in: The Optimal Hard Thresholdfor Singular Values is \deqn{\sqrt(4/ 3)}
+#'
+#' @param bet numeric
+#'
+#' @return numeric
+#' @export
+#'
+#' @examples
+#' get_lambda(0.3)
 get_lambda <- function(bet){
   w = (8*bet) / ((bet + 1) + sqrt(bet^2 + 14*bet + 1))
   lambda_star <- sqrt(2*(bet + 1) + w)
