@@ -1,5 +1,3 @@
-
-
 #' Computes lambda
 #'
 #' Computes the value of lambda as defined in: The Optimal Hard Threshold for Singular Values is \eqn{\sqrt(4/ 3)}
@@ -23,7 +21,7 @@ get_lambda <- function(bet){
 #' This function is an auxiliary function includes  the marcenco-pastur function that was to be integrated to find the upper integration bound that produces and area of 1/2.
 #'
 #' @param t Parameter t
-#' @param bet Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.
+#' @param bet Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number  of rows of the input matrix and n the number of columns.
 #'
 #' @return returns the function value for a specific t and a particular aspect ration m/n.
 #' @export
@@ -37,6 +35,7 @@ fun_to_int <- function(t,bet){
   res <- numerator/denominator
   return(res)
 }
+
 
 
 #' Get mu_beta
@@ -85,10 +84,11 @@ get_mu_beta <- function(bet){
 #'
 #' @param bet Beta value. Aspect ratio of the input matrix.  \deqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.
 #'
-#' @return omega. Returnes the omega value.
+#' @return omega. Returns the omega value.
 #' @export
 #'
-#' @examples get_omega(0.3)
+#' @examples
+#' get_omega(0.3)
 get_omega <- function(bet){
   lamb <- get_lambda(bet)
   mu_beta <- get_mu_beta(bet)

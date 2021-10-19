@@ -9,7 +9,7 @@ fun_to_int(t, bet)
 \arguments{
 \item{t}{Parameter t}
 
-\item{bet}{Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.}
+\item{bet}{Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number  of rows of the input matrix and n the number of columns.}
 }
 \value{
 returns the function value for a specific t and a particular aspect ration m/n.

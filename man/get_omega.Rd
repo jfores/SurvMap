@@ -10,7 +10,7 @@ get_omega(bet)
 \item{bet}{Beta value. Aspect ratio of the input matrix.  \deqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.}
 }
 \value{
-omega. Returnes the omega value.
+omega. Returns the omega value.
 }
 \description{
 Computes the omega value as described in Add reference.
