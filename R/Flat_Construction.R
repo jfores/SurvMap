@@ -25,7 +25,7 @@ get_lambda <- function(bet){
 #' @param t Parameter t
 #' @param bet Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.
 #'
-#' @return
+#' @return returns the function value for a specific t and a particular aspect ration m/n.
 #' @export
 #'
 #' @examples fun_to_int(1,0.3)
@@ -33,7 +33,7 @@ fun_to_int <- function(t,bet){
   b_p <- (1 + sqrt(bet))^2
   b_m <- (1 - sqrt(bet))^2
   numerator <- sqrt((b_p - t)*(t - b_m))
-  denominator <- 2*pgi*t*bet
+  denominator <- 2*pi*t*bet
   res <- numerator/denominator
   return(res)
 }

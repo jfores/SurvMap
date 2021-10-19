@@ -1,5 +1,5 @@
 Package: SurvMap
-Title: Mapper Survival Analysis of Transcriptomic Data
+Title: Mapper Survival Analysis for Transcriptomic Data
 Version: 0.0.0.9000
 Authors@R: 
     person(given = "Jaume",
@@ -7,7 +7,7 @@ Authors@R:
            role = c("aut", "cre"),
            email = "fores.martos.jaume@gmail.com",
            comment = c(ORCID = "https://orcid.org/0000-0002-9025-4877"))
-Description: This package is desiigned to carry out Mapper-based survival analsis.
+Description: This package is desiigned to carry out Mapper-based survival analsis with transcriptomic data. Mapper-based survival analysis is a modification of Prograssion Analysis of Disease (PAD) where survival data is taken into account in the filtering function.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

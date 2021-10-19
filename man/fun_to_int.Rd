@@ -12,7 +12,7 @@ fun_to_int(t, bet)
 \item{bet}{Beta value. Aspect ratio of the input matrix.  \eqn{\frac{m}{n}}, were m is the number of rows of the input matrix and n the number of columns.}
 }
 \value{
-
+returns the function value for a specific t and a particular aspect ration m/n.
 }
 \description{
 This function is an auxiliary function includes  the marcenco-pastur function that was to be integrated to find the upper integration bound that produces and area of 1/2.
