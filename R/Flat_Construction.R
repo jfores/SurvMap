@@ -95,3 +95,28 @@ get_omega <- function(bet){
   omega <- lamb/sqrt(mu_beta)
   return(omega)
 }
+
+
+#' Rectangular matrix denoiser
+#'
+#' Takes a rectangular matrix composed by the addition of a signal and a gaussian noise matrix and returns a matrix of the same dimension that is denoised through a singular value truncation proccess.
+#'
+#' @param input_mat A noisy matrix to denoise.
+#'
+#' @return Returns a same dimension denoised version of the matrix.
+#' @export
+#'
+#' @examples
+#' denoise_rectangular_matrix(matrix(c(1,2,3,4,5,2,3,1,2,3),ncol = 2))
+denoise_rectangular_matrix <- function(input_mat){
+  omega_found <- get_omega(ncol(input_mat)/nrow(input_mat))
+  svd_input_mat <- base::svd(input_mat)
+  D <- diag(svd_input_mat$d)
+  U <- svd_input_mat$u
+  V <- svd_input_mat$v
+  threshold_singular <- stats::median(svd_input_mat$d)*omega_found
+  up_to_sv <- length(svd_input_mat$d[svd_input_mat$d > threshold_singular])
+  diag(D)[(up_to_sv + 1):length(diag(D))] <- 0
+  mat_denoised <- U %*% D %*% t(V)
+  return(mat_denoised)
+}

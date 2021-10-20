@@ -3,8 +3,10 @@ title: "SurvMap-vignette"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{SurvMap-vignette}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r, include = FALSE}
@@ -14,8 +16,78 @@ knitr::opts_chunk$set(
 )
 ```
 
-This vignette represents and introduction to the use of the package SurvMap. $\frac{m}{n}$
+This vignette represents and introduction to the use of the package SurvMap. $\frac{m}{n}$ First we will show some aspects linked to matrix the denoising function implemented in the package, that is derived from (10.1109/TIT.2014.2323359). It allows to remove the noise part of matrices that are assumed to be composed by the addition of a signal matrix and a gaussian noise matrix.
 
 ```{r setup}
-#library(SurvMap)
+library(SurvMap)
 ```
+
+Let's first create a signal matrix for testing.
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+t <- seq(-3,3,0.01)
+Utrue <- cbind(cos(17*t) * exp(-t^2), sin(11*t))
+Strue <- cbind(c(2,0),c(0,0.5))
+Vtrue <- cbind(sin(5*t)* exp(-t^2),cos(13*t))
+X <- Utrue %*% Strue %*% t(Vtrue)
+image(t(X))
+```
+
+Then add some gaussian noise to our matrix with $\sigma = 1$ and $\mu = 0$.
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+sigma <- 1
+noise <- matrix(rnorm(601 * 601),ncol = 601)
+Xnoisy <- X + noise
+image(t(Xnoisy))
+```
+
+Since we will work with rectangular matrices in most applications let's get a rectangular noisy matrix by removing some columns of our original noisy matrix.
+
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+Xnoisy_r <- Xnoisy[,1:400]
+dim(Xnoisy_r)
+image(t(Xnoisy_r))
+```
+
+And lets do the same with the  signal matrix.
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+X_r <- X[,1:400]
+dim(X_r)
+image(t(X_r))
+```
+
+Now let's  denoise our rectangular noisy matrix. 
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+omega_found <- get_omega(ncol(Xnoisy_r)/nrow(Xnoisy_r))
+svd_Xnoisy_r <- svd(Xnoisy_r)
+D <- diag(svd_Xnoisy_r$d)
+U <- svd_Xnoisy_r$u
+V <- svd_Xnoisy_r$v
+Xnoisy_reconstructed <- U %*% D %*% t(V)
+image(t(Xnoisy_reconstructed))
+```
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+omega_found <- get_omega(ncol(Xnoisy_r)/nrow(Xnoisy_r))
+svd_Xnoisy_r <- svd(Xnoisy_r)
+D <- diag(svd_Xnoisy_r$d)
+U <- svd_Xnoisy_r$u
+V <- svd_Xnoisy_r$v
+threshold_singular <- median(svd_Xnoisy_r$d)*omega_found
+up_to_sv <- length(svd_Xnoisy_r$d[svd_Xnoisy_r$d > threshold_singular])
+D_filt <- D
+diag(D_filt)[(up_to_sv + 1):length(diag(D_filt))] <- 0
+Xnoisy_denoised <- U %*% D_filt %*% t(V)
+dim(Xnoisy_denoised)
+image(t(Xnoisy_denoised))
+```
+
+```{r,fig.dim = c(5,7),fig.align = 'center'}
+denoised_matrix <- denoise_rectangular_matrix(Xnoisy_r)
+image(t(denoised_matrix))
+```
+
