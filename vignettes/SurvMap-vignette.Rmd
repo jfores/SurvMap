@@ -88,6 +88,10 @@ image(t(Xnoisy_denoised))
 
 ```{r,fig.dim = c(5,7),fig.align = 'center'}
 denoised_matrix <- denoise_rectangular_matrix(Xnoisy_r)
+
+
+image(t(Xnoisy_r))
 image(t(denoised_matrix))
+is.matrix("t")
 ```
 

@@ -109,14 +109,21 @@ get_omega <- function(bet){
 #' @examples
 #' denoise_rectangular_matrix(matrix(c(1,2,3,4,5,2,3,1,2,3),ncol = 2))
 denoise_rectangular_matrix <- function(input_mat){
-  omega_found <- get_omega(ncol(input_mat)/nrow(input_mat))
-  svd_input_mat <- base::svd(input_mat)
-  D <- diag(svd_input_mat$d)
-  U <- svd_input_mat$u
-  V <- svd_input_mat$v
-  threshold_singular <- stats::median(svd_input_mat$d)*omega_found
-  up_to_sv <- length(svd_input_mat$d[svd_input_mat$d > threshold_singular])
-  diag(D)[(up_to_sv + 1):length(diag(D))] <- 0
-  mat_denoised <- U %*% D %*% t(V)
-  return(mat_denoised)
+    if(base::is.matrix(input_mat) | (base::is.data.frame(input_mat) & all(base::sapply(input_mat, is.numeric)))){
+      if(base::is.data.frame(input_mat)){
+          input_mat <- base::as.matrix(input_mat)
+        }
+      omega_found <- get_omega(ncol(input_mat)/nrow(input_mat))
+      svd_input_mat <- base::svd(input_mat)
+      D <- diag(svd_input_mat$d)
+      U <- svd_input_mat$u
+      V <- svd_input_mat$v
+      threshold_singular <- stats::median(svd_input_mat$d)*omega_found
+      up_to_sv <- length(svd_input_mat$d[svd_input_mat$d > threshold_singular])
+      diag(D)[(up_to_sv + 1):length(diag(D))] <- 0
+      mat_denoised <- U %*% D %*% t(V)
+      return(mat_denoised)
+    }else{
+      print("Data must be provided in numeric matrix or data.frame formats...")
+    }
 }
