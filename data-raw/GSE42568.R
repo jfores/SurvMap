@@ -16,21 +16,6 @@ options(stringsAsFactors = F)
 #Loading libraries#
 ###################
 
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-
-BiocManager::install("oligo",force = TRUE)
-
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-
-BiocManager::install("oligoClasses",force = TRUE)
-
-install.packages("ff")
-install.packages("/home/jj/Downloads/ff_2.2-14.tar.gz", repos = NULL, type="source")
-install.packages("/home/jj/Downloads/bit_1.1-15.2.tar.gz", repos = NULL, type="source")
-
-
 library(affy)
 library(oligoClasses)
 library(oligo)
@@ -43,6 +28,8 @@ library(a4Preproc)
 library(genefu)
 library(plyr)
 library(preprocessCore)
+library(hgu133plus2.db)
+library(WGCNA)
 
 #####################################
 #Loading and reformating sample data#
@@ -115,24 +102,68 @@ cols_eDat <- colnames(eData_GEO)
 cols_eDat <- gsub("_.*","",gsub(".CEL","",cols_eDat))
 pData_GEO_ft <- pData_GEO_ft[cols_eDat,]
 
-#Generating expressionset
+save(file = "/home/jj/Desktop/temp/GSE42568/eData_GEO.Rda",eData_GEO)
+eData_GEO <- get(load(file = "/home/jj/Desktop/temp/GSE42568/eData_GEO.Rda"))
+save(file = "/home/jj/Desktop/temp/GSE42568/pData_GEO_ft.Rda",pData_GEO_ft)
+pData_GEO_ft <- get(load(file = "/home/jj/Desktop/temp/GSE42568/pData_GEO_ft.Rda"))
 
-GEO_Eset_Raw <- affy::rma(eData_GEO,background = TRUE,normalize = TRUE)
-help(rma)
-colnames(GEO_Eset_Raw)
-colnames(GEO_Eset_Raw) <- gsub("_.*","",gsub(".CEL","",colnames(GEO_Eset_Raw)))
-pData(GEO_Eset_Raw) <- pData_GEO_ft[colnames(GEO_Eset_Raw),]
-exprs(GEO_Eset_Raw)
-BiocManager::install("preprocessCore", configure.args="--disable-threading")
-if (!requireNamespace("BiocManager", quietly = TRUE))
-  install.packages("BiocManager")
-install.packages("ropenblas")
-BiocManager::install("oligo",force = T)
+#The problem was solved by doing: BiocManager::install("preprocessCore", configure.args="--disable-threading",force = TRUE)
+#As explained at: https://support.bioconductor.org/p/122925/
+
+#Background correction and normalization using RMA
+
+GEO_Eset_Norm <- affy::rma(eData_GEO,background = TRUE,normalize = TRUE)
+colnames(GEO_Eset_Norm) <- gsub("_.*","",gsub(".CEL","",colnames(GEO_Eset_Norm)))
+pData(GEO_Eset_Norm) <- pData_GEO_ft[colnames(GEO_Eset_Norm),]
+GEO_Eset_Norm <- addGeneInfo(GEO_Eset_Norm, annotationLibrary = NULL)
+annotation_temp <- featureData(GEO_Eset_Norm)@data
+annotation_temp$probe <- rownames(annotation_temp)
+colnames(annotation_temp) <- c("EntrezGene.ID","ENSEMBLID","Gene.Symbol","Description","probe")
+
+#Background correction and normalization using fRMA
+
+GEO_Eset_Norm_frma <- frma(eData_GEO)
+colnames(GEO_Eset_Norm_frma) <- gsub("_.*","",gsub(".CEL","",colnames(GEO_Eset_Norm_frma)))
+pData(GEO_Eset_Norm_frma) <- pData_GEO_ft[colnames(GEO_Eset_Norm_frma),]
+
+GEO_Eset_Norm_frma <- addGeneInfo(GEO_Eset_Norm_frma, annotationLibrary = NULL)
+annotation_temp_frma <- featureData(GEO_Eset_Norm_frma)@data
+annotation_temp_frma$probe <- rownames(GEO_Eset_Norm_frma)
+colnames(annotation_temp_frma) <- c("EntrezGene.ID","ENSEMBLID","Gene.Symbol","Description","probe")
+
+#Molecular classifications.
+library(hgu133plus2frmavecs)
+
+data("pam50.robust")
+pam50 <- molecular.subtyping(sbt.model = "pam50", data = t(exprs(GEO_Eset_Norm)),annot = annotation_temp, do.mapping = TRUE)
+pData(GEO_Eset_Norm)$pCh_pam50 <- as.character(pam50$subtype)
+pData(GEO_Eset_Norm)$pCh_Batch <- rep("GSE42568",ncol(GEO_Eset_Norm))
+
+pam50_frma <- molecular.subtyping(sbt.model = "pam50", data = t(exprs(GEO_Eset_Norm_frma)),annot = annotation_temp_frma, do.mapping = TRUE)
+pData(GEO_Eset_Norm_frma)$pam50_frma <- as.character(pam50_frma$subtype)
+pData(GEO_Eset_Norm_frma)$pCh_Batch <- rep("GSE42568",ncol(GEO_Eset_Norm_frma))
+
+
+list_data_norm <- list(GEO_Eset_Norm,GEO_Eset_Norm_frma)
+save(GEO_Eset_Norm, GEO_Eset_Norm_frma, file = "/home/jj/Desktop/temp/GSE42568/Data/GSE42568.RData")
+load("/home/jj/Desktop/temp/GSE42568/Data/GSE42568.RData")
+
+#Collapsing probes targeting the same gene.
+
+x <- hgu133plus2SYMBOL
+mapped_probes <- mappedkeys(x)
+xx <- as.list(x[mapped_probes])
+xx_filt <- xx[rownames(GEO_Eset_Norm_frma)]
+exprs_eset_collapsed <- collapseRows(exprs(GEO_Eset_Norm_frma),as.character(xx_filt),rownames(GEO_Eset_Norm_frma),method="MaxMean")
+exprs_eset_collapsed <- exprs_eset_collapsed[[1]][!is.na(rownames(exprs_eset_collapsed[[1]])),]
+GEO_Eset_Norm_frma_Collapsed <- exprs_eset_collapsed
+pData_FRMA <- pData(GEO_Eset_Norm_frma)
+save(GEO_Eset_Norm_frma_Collapsed,pData_FRMA, file = "/home/jj/Desktop/temp/GSE42568/Data/GSE42568_Collapsed.RData")
+
 
 ###########
 #Functions#
 ###########
-
 
 unfold_charact <- function(GSM){
   GSM_meta <- Meta(GSM)
