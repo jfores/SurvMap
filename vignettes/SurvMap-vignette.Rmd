@@ -95,3 +95,16 @@ image(t(denoised_matrix))
 is.matrix("t")
 ```
 
+The data included in this Vignette is derived from GSE42568. A dataset that contains  
+one hundred and twenty one samples. One hundred and four derived from breast cancer samples
+and seventeen derived from healthy breast mammary tissues. 
+
+```{r}
+data("GSE42568_Collapsed")
+GEO_Eset_Norm_frma_Collapsed
+bool_filt <- pData_FRMA$pCh_Status == "NT"
+Exp_NT <- GEO_Eset_Norm_frma_Collapsed[,bool_filt]
+pData <- pData_FRMA[bool_filt,]
+denoise_rectangular_matrix(Exp_NT)
+```
+
