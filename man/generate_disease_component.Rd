@@ -18,8 +18,9 @@ disease_component a matrix containing the disease component of the complete data
 This functions produces a disease component matrix from the complete dataset and the denoised flattened normal data.
 }
 \examples{
-full_data <- matrix(stats::rnorm(120),col=20)
+full_data <- matrix(stats::rnorm(120),ncol=20)
 normal_tissue <- full_data[,11:20]
-normal_space <- flatten_normal_tiss(normal_tissue)
-disease_component <- generate_disease_component(full_data,normal_space)
+normal_tissue_f <- flatten_normal_tiss(normal_tissue)
+normal_tissue_f_d <- denoise_rectangular_matrix(normal_tissue_f)
+disease_component <- generate_disease_component(full_data,normal_tissue_f_d)
 }

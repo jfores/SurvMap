@@ -99,18 +99,37 @@ The data included in this Vignette is derived from GSE42568. A dataset that cont
 one hundred and twenty one samples. One hundred and four derived from breast cancer samples
 and seventeen derived from healthy breast mammary tissues. 
 
-```{r}
+```{r,eval=FALSE}
+#Loading data.
 data("GSE42568_Collapsed")
-GEO_Eset_Norm_frma_Collapsed
 bool_filt <- pData_FRMA$pCh_Status == "NT"
 Exp_NT <- GEO_Eset_Norm_frma_Collapsed[,bool_filt]
 pData_NT <- pData_FRMA[bool_filt,]
 Exp_T <- GEO_Eset_Norm_frma_Collapsed[,!bool_filt]
 pData_T <- pData_FRMA[!bool_filt,]
 
+#Generaling the healthy tissue model.
+
 Exp_NT_f <- flatten_normal_tiss(Exp_NT)
 class(Exp_NT_f)
 Exp_NT_f_d <- denoise_rectangular_matrix(Exp_NT_f)
 class(Exp_NT_f)
+
+
+#cox_all <- cox_all_genes(Exp_T,pData_T$pCh_DFS_T,pData_T$pCh_DFS_E)
+
+
+#Creating the disease component matrix.
+
+#Disease_component <- generate_disease_component(GEO_Eset_Norm_frma_Collapsed,Exp_NT_f)
+#Disease_component_tumors <- Disease_component[,!bool_filt]
+
+#Selecting genes.
+
+#variable_genes <- gene_selection(Disease_component_tumors,0.99) #Top variable genes in tumor samples.
+
+#survival_related_genes <- get_survival_related_genes(cox_all,c(0.005,0.995)) #Genes showing the stringest association with disease-free survival in univariate proporciohal hazar models analysis. (cox.)
+
+#selected_genes <- unique(c(survival_related_genes,variable_genes))
 ```
 

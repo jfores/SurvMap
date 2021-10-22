@@ -3,6 +3,7 @@
 export(denoise_rectangular_matrix)
 export(flatten_normal_tiss)
 export(fun_to_int)
+export(gene_selection)
 export(generate_disease_component)
 export(get_lambda)
 export(get_mu_beta)
