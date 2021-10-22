@@ -18,3 +18,29 @@ flatten_normal_tiss <- function(normal_tiss){
   }
   return(df_out)
 }
+
+
+#' Generate disease component matrix.
+#'
+#' This functions produces a disease component matrix from the complete dataset and the denoised flattened normal data.
+#'
+#' @param complete_ds Matrix containing the full dataset.
+#' @param normal_space Denoised flattened healthy tissue data.
+#'
+#' @return disease_component a matrix containing the disease component of the complete dataset.
+#' @export
+#'
+#' @examples
+#' full_data <- matrix(stats::rnorm(120),col=20)
+#' normal_tissue <- full_data[,11:20]
+#' normal_space <- flatten_normal_tiss(normal_tissue)
+#' disease_component <- generate_disease_component(full_data,normal_space)
+generate_disease_component <- function(complete_ds,normal_space){
+  disease_component <- complete_ds
+  for(i in 1:ncol(complete_ds)){
+    print(i)
+    disease_component[,i] <- resid(lm(complete_ds[,i] ~ 0 + ., data = data.frame(normal_space)))
+  }
+  return(disease_component)
+}
+
