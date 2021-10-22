@@ -9,6 +9,7 @@
 #' @export
 #'
 #' @examples
+#' normal_tissue_matrix <- matrix(stats::rnorm(36),nrow=6)
 #' flatten_normal_tiss(normal_tissue_matrix)
 flatten_normal_tiss <- function(normal_tiss){
   df_out <- normal_tiss
