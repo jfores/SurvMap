@@ -4,7 +4,7 @@
 #'
 #' @param bet numeric
 #'
-#' @return A numeric lambda value
+#' @return A numeric lambda value.
 #' @export
 #'
 #' @examples
