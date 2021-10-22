@@ -7,10 +7,10 @@
 flatten_normal_tiss(normal_tiss)
 }
 \arguments{
-\item{normal_tissue_data}{}
+\item{normal_tiss}{A normal tissue data gene expression matrix.}
 }
 \value{
-
+A gene expression matrix containing the flattened versión of the vectors.
 }
 \description{
 F

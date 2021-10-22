@@ -104,7 +104,13 @@ data("GSE42568_Collapsed")
 GEO_Eset_Norm_frma_Collapsed
 bool_filt <- pData_FRMA$pCh_Status == "NT"
 Exp_NT <- GEO_Eset_Norm_frma_Collapsed[,bool_filt]
-pData <- pData_FRMA[bool_filt,]
-denoise_rectangular_matrix(Exp_NT)
+pData_NT <- pData_FRMA[bool_filt,]
+Exp_T <- GEO_Eset_Norm_frma_Collapsed[,!bool_filt]
+pData_T <- pData_FRMA[!bool_filt,]
+
+Exp_NT_f <- flatten_normal_tiss(Exp_NT)
+class(Exp_NT_f)
+Exp_NT_f_d <- denoise_rectangular_matrix(Exp_NT_f)
+class(Exp_NT_f)
 ```
 
