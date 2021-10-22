@@ -1,8 +1,8 @@
 #' F
 #'
-#' @param normal_tissue_data
+#' @param normal_tiss A normal tissue data gene expression matrix.
 #'
-#' @return
+#' @return A gene expression matrix containing the flattened versión of the vectors.
 #' @export
 #'
 #' @examples
