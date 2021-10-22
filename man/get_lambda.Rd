@@ -10,7 +10,7 @@ get_lambda(bet)
 \item{bet}{numeric}
 }
 \value{
-A numeric lambda value
+A numeric lambda value.
 }
 \description{
 Computes the value of lambda as defined in: The Optimal Hard Threshold for Singular Values is \eqn{\sqrt(4/ 3)}

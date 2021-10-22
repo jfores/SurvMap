@@ -122,6 +122,8 @@ denoise_rectangular_matrix <- function(input_mat){
     up_to_sv <- length(svd_input_mat$d[svd_input_mat$d > threshold_singular])
     diag(D)[(up_to_sv + 1):length(diag(D))] <- 0
     mat_denoised <- U %*% D %*% t(V)
+    rownames(mat_denoised) <- rownames(input_mat)
+    colnames(mat_denoised) <- colnames(input_mat)
     return(mat_denoised)
   }else{
     print("Data must be provided in numeric matrix or data.frame formats...")

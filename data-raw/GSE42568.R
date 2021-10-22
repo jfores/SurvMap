@@ -160,7 +160,7 @@ GEO_Eset_Norm_frma_Collapsed <- exprs_eset_collapsed
 pData_FRMA <- pData(GEO_Eset_Norm_frma)
 save(GEO_Eset_Norm_frma_Collapsed,pData_FRMA, file = "/home/jj/Desktop/temp/GSE42568/Data/GSE42568_Collapsed.RData",)
 load("/home/jj/Desktop/temp/GSE42568/Data/GSE42568_Collapsed.RData")
-save(GEO_Eset_Norm_frma_Collapsed, file = "/home/jj/Desktop/temp/GSE42568/Data/GEO_Eset_Norm_frma_Collapsed.RData")
+#save(GEO_Eset_Norm_frma_Collapsed, file = "/home/jj/Desktop/temp/GSE42568/Data/GEO_Eset_Norm_frma_Collapsed.RData")
 
 ###########
 #Functions#
