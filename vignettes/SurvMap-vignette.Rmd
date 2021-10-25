@@ -100,6 +100,8 @@ one hundred and twenty one samples. One hundred and four derived from breast can
 and seventeen derived from healthy breast mammary tissues. 
 
 ```{r,eval=FALSE}
+library(SurvMap)
+
 #Loading data.
 data("GSE42568_Collapsed")
 bool_filt <- pData_FRMA$pCh_Status == "NT"
@@ -115,21 +117,51 @@ class(Exp_NT_f)
 Exp_NT_f_d <- denoise_rectangular_matrix(Exp_NT_f)
 class(Exp_NT_f)
 
-
-#cox_all <- cox_all_genes(Exp_T,pData_T$pCh_DFS_T,pData_T$pCh_DFS_E)
-
+cox_all <- cox_all_genes(Exp_T,pData_T$pCh_DFS_T,pData_T$pCh_DFS_E)
 
 #Creating the disease component matrix.
 
-#Disease_component <- generate_disease_component(GEO_Eset_Norm_frma_Collapsed,Exp_NT_f)
-#Disease_component_tumors <- Disease_component[,!bool_filt]
+Disease_component <- generate_disease_component(GEO_Eset_Norm_frma_Collapsed,Exp_NT_f)
+
+Disease_component_tumors <- Disease_component[,!bool_filt]
 
 #Selecting genes.
 
-#variable_genes <- gene_selection(Disease_component_tumors,0.99) #Top variable genes in tumor samples.
+variable_genes <- gene_selection(Disease_component_tumors,0.99) #Top variable genes in tumor samples.
 
-#survival_related_genes <- get_survival_related_genes(cox_all,c(0.005,0.995)) #Genes showing the stringest association with disease-free survival in univariate proporciohal hazar models analysis. (cox.)
+survival_related_genes <- get_survival_related_genes(cox_all,c(0.005,0.995)) #Genes showing the stringest association  with disease-free survival in univariate proporciohal hazar models analysis. (cox.)
 
-#selected_genes <- unique(c(survival_related_genes,variable_genes))
+selected_genes <- unique(c(survival_related_genes,variable_genes))
 ```
+
+```{r,eval=FALSE}
+Ds_for_an <- Disease_component[selected_genes,]
+
+filt_data <- lp_norm_k_powers(Ds_for_an,p = 2,k = 1)
+
+
+One_D_Mapper <- function(point_cloud,filter_data,n_intervals,percent_overlap){
+  if(all(colnames(point_cloud) == names(filter_data))){
+    min_val <- min(filter_data)
+    max_val <- max(filter_data)
+    interval_width <- (max_val - min_val)/n_intervals
+    print(interval_width)
+  }else{
+    print("point cloud data columns and filter data values present different orders")
+    }
+}
+
+
+One_D_Mapper(Ds_for_an,filt_data,5)
+
+prod(5)
+
+
+
+https://github.com/paultpearson/TDAmapper
+
+library(graphics)
+graphics::co.intervals
+```
+
 
