@@ -40,7 +40,7 @@ generate_disease_component <- function(complete_ds,normal_space){
   disease_component <- complete_ds
   for(i in 1:ncol(complete_ds)){
     print(i)
-    disease_component[,i] <- resid(lm(complete_ds[,i] ~ 0 + ., data = data.frame(normal_space)))
+    disease_component[,i] <- stats::resid(stats::lm(complete_ds[,i] ~ 0 + ., data = data.frame(normal_space)))
   }
   return(disease_component)
 }

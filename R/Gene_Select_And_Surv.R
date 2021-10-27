@@ -35,7 +35,7 @@ cox_all_genes <- function(eData,time_vector,event_vector){
 
 
 get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
-  genes_asso_surv <- rownames(cox_all[cox_all[,"z"] < quantile(cox_all[,"z"],probs = percent[1]) | cox_all[,"z"] > quantile(cox_all[,"z"],probs = percent[2]),])
+  genes_asso_surv <- rownames(cox_all[cox_all[,"z"] < stats::quantile(cox_all[,"z"],probs = percent[1]) | cox_all[,"z"] > stats::quantile(cox_all[,"z"],probs = percent[2]),])
   return(genes_asso_surv)
 
 }

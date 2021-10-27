@@ -132,6 +132,9 @@ variable_genes <- gene_selection(Disease_component_tumors,0.99) #Top variable ge
 survival_related_genes <- get_survival_related_genes(cox_all,c(0.005,0.995)) #Genes showing the stringest association  with disease-free survival in univariate proporciohal hazar models analysis. (cox.)
 
 selected_genes <- unique(c(survival_related_genes,variable_genes))
+
+
+
 ```
 
 ```{r,eval=FALSE}
@@ -139,6 +142,19 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 filt_data <- lp_norm_k_powers(Ds_for_an,p = 2,k = 1)
 
+test_mat <- matrix(c(1,2,3,3,4,5,6,6,7,8,9,9),nrow = 4)
+test_mat
+test_vec <- c(1,2,3,4)
+test_vec
+test_mat * test_vec
+
+
+
+
+test_temp <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
+
+
+plot(test_temp)
 
 One_D_Mapper <- function(point_cloud,filter_data,n_intervals,percent_overlap){
   if(all(colnames(point_cloud) == names(filter_data))){
