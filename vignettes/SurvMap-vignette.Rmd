@@ -148,13 +148,13 @@ test_vec <- c(1,2,3,4)
 test_vec
 test_mat * test_vec
 
+filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
+plot(filter_function)
+max(filter_function)
+
+get_intervals_One_D(Ds_for_an,filter_function,5,0.3)
 
 
-
-test_temp <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
-
-
-plot(test_temp)
 
 One_D_Mapper <- function(point_cloud,filter_data,n_intervals,percent_overlap){
   if(all(colnames(point_cloud) == names(filter_data))){
