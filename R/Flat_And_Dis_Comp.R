@@ -38,8 +38,9 @@ flatten_normal_tiss <- function(normal_tiss){
 #' disease_component <- generate_disease_component(full_data,normal_tissue_f_d)
 generate_disease_component <- function(complete_ds,normal_space){
   disease_component <- complete_ds
+  pb <- utils::txtProgressBar(min = 0, max = ncol(complete_ds), style = 3)
   for(i in 1:ncol(complete_ds)){
-    print(i)
+    utils::setTxtProgressBar(pb, i)
     disease_component[,i] <- stats::resid(stats::lm(complete_ds[,i] ~ 0 + ., data = data.frame(normal_space)))
   }
   return(disease_component)

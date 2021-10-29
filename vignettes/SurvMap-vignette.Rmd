@@ -132,27 +132,98 @@ variable_genes <- gene_selection(Disease_component_tumors,0.99) #Top variable ge
 survival_related_genes <- get_survival_related_genes(cox_all,c(0.005,0.995)) #Genes showing the stringest association  with disease-free survival in univariate proporciohal hazar models analysis. (cox.)
 
 selected_genes <- unique(c(survival_related_genes,variable_genes))
-
-
-
 ```
 
 ```{r,eval=FALSE}
 Ds_for_an <- Disease_component[selected_genes,]
 
-filt_data <- lp_norm_k_powers(Ds_for_an,p = 2,k = 1)
-
-test_mat <- matrix(c(1,2,3,3,4,5,6,6,7,8,9,9),nrow = 4)
-test_mat
-test_vec <- c(1,2,3,4)
-test_vec
-test_mat * test_vec
+#filt_data <- lp_norm_k_powers(Ds_for_an,p = 2,k = 1)
 
 filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
-plot(filter_function)
-max(filter_function)
 
-get_intervals_One_D(Ds_for_an,filter_function,5,0.3)
+int_data <- get_intervals_One_D(Ds_for_an,filter_function,3,0.7)
+
+#Find samples at each level.
+
+filter_function[filter_function >= int_data[[1]][1] & filter_function < int_data[[1]][2]]
+
+which(filter_function >= int_data[[3]][1] & filter_function < int_data[[3]][2])
+
+lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)
+
+number_of_bins <- 100
+
+test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[3]]]
+
+cluster_level(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "standard",n_bins_clust = 10)
+
+
+level_dist <- as.dist(1-cor(test_ds_for_ann))
+
+#level_dist <- dist(test_ds_for_ann,method = "euclidean")
+
+level_max_dist <- max(level_dist)
+
+level_hcluster_ouput <- hclust(level_dist,method="single")
+
+help("cutree")
+
+
+silhouette(cutree(level_hcluster_ouput,1),level_dist)
+
+length(level_hcluster_ouput$order)
+
+
+
+for(i in 2:(length(level_hcluster_ouput$order)-1)){
+  print(i)
+  test <- silhouette(cutree(level_hcluster_ouput,i),level_dist)
+  print(mean(test[,3]))
+}
+
+
+
+
+test <- silhouette(cutree(level_hcluster_ouput,103),level_dist)
+plot(test)
+mean(test[,3])
+silhouette
+cluster:::silhouette
+
+help(silhouette)
+
+
+level_hcluster_ouput$
+plot(level_hcluster_ouput)
+help("hclust")
+heights <- level_hcluster_ouput$height
+level_hcluster_ouput$order
+level_hcluster_ouput$labels
+hist(heights)
+
+library(cluster)
+plot(silhouette(cutree(level_hcluster_ouput, h=0.45),level_dist))
+
+
+help("hclust")
+
+bin_breaks <- seq(from=min(heights), to=level_max_dist, by=(level_max_dist - min(heights))/number_of_bins)
+
+myhist <- hist(c(heights,level_max_dist), breaks=bin_breaks, plot=FALSE)
+plot(myhist)
+level_hcluster_ouput$height
+myhist$counts == 0
+
+
+
+
+
+z <- (myhist$counts == 0)
+
+cutoff <- myhist$mids[min(which(z == TRUE))]
+
+level_hcluster_ouput$height
+cluster_indices_within_level <- as.vector( cutree(level_hcluster_ouput, h=cutoff) )
 
 
 

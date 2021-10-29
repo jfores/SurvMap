@@ -18,6 +18,21 @@ gene_selection <- function(disease_component_tumors,percent = 0.85){
 
 
 
+#' Survival analysis based on gene expression levels.
+#'
+#' Carries out univariate cox protportional hazard models for the expression levels of each gene included in the dataset and its link with relapse-free or overall survival.
+#'
+#' @param eData Expression data for disease samples
+#' @param time_vector Vector including time to relapse or time to death information
+#' @param event_vector Numeric vector indicating if relapse or death have been produced.
+#'
+#' @return A matrix with the results of the application of proportional hazard models using the expression levels of eahc gene as covariate.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' cox_all_genes(expression_vector_disease,time_vector,event_vector)
+#' }
 cox_all_genes <- function(eData,time_vector,event_vector){
   pb <- utils::txtProgressBar(min = 0, max = nrow(eData), style = 3)
   list_out <- list()
@@ -34,6 +49,19 @@ cox_all_genes <- function(eData,time_vector,event_vector){
 }
 
 
+
+#' Gene selector based on association to survival.
+#'
+#' @param cox_all A matrix output from the cox_all_genes function
+#' @param percent A two element vector indicating the bottom and top quantiles for gene selection.
+#'
+#' @return Returns a list of genes that present z-values above or below the selected quantile thresholds.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' get_survival_related_genes(cox_all,percent)
+#' }
 get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
   genes_asso_surv <- rownames(cox_all[cox_all[,"z"] < stats::quantile(cox_all[,"z"],probs = percent[1]) | cox_all[,"z"] > stats::quantile(cox_all[,"z"],probs = percent[2]),])
   return(genes_asso_surv)
