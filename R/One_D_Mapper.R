@@ -10,7 +10,7 @@
 #' @param n_int Number of intervals to divide the filtering function in.
 #' @param p Percentage of overlap between intervals.
 #'
-#' @return
+#' @return Returns the set of intervals for the filtering function.
 #' @export
 #'
 #' @examples

@@ -155,7 +155,10 @@ int_data <- get_intervals_One_D(Ds_for_an,filter_function,3,0.7)
 
 number_of_bins <- 100
 
+library(SurvMap)
+
 test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[3]]]
+
 
 cluster_level(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "standard",n_bins_clust = 10)
 
