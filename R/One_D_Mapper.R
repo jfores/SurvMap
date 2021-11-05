@@ -1,6 +1,3 @@
-
-
-
 #' Extract intervals from filter function output values.
 #'
 #'This function constructs the intervals for a given filtering function.
