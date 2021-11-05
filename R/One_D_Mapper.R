@@ -54,9 +54,10 @@ cluster_level <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),o
     return(NULL)
   }
   else if(distance_type == "cor"){
-    level_dist <- stats::as.dist(1-cor(test_ds_for_ann))
+    level_dist <- stats::as.dist(1-cor(dis_est_mod_lev))
   }else{
-    level_dist <- dist(test_ds_for_ann,method = distance_type)
+    level_dist <- dist(t(dis_est_mod_lev),method = distance_type)
+    print(level_dist)
   }
   max_dist_lev <- max(level_dist)
   level_hclust_out <- hclust(level_dist,method="single")
