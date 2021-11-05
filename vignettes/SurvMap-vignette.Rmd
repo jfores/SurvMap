@@ -101,7 +101,7 @@ and seventeen derived from healthy breast mammary tissues.
 
 ```{r,eval=FALSE}
 library(SurvMap)
-
+install()
 #Loading data.
 data("GSE42568_Collapsed")
 bool_filt <- pData_FRMA$pCh_Status == "NT"
@@ -116,8 +116,6 @@ Exp_NT_f <- flatten_normal_tiss(Exp_NT)
 class(Exp_NT_f)
 Exp_NT_f_d <- denoise_rectangular_matrix(Exp_NT_f)
 class(Exp_NT_f)
-
-
 
 cox_all <- cox_all_genes(Exp_T,pData_T$pCh_DFS_T,pData_T$pCh_DFS_E)
 
@@ -155,14 +153,10 @@ int_data <- get_intervals_One_D(Ds_for_an,filter_function,3,0.7)
 
 number_of_bins <- 100
 
-
-library(devtools)
-install()
-library(SurvMap)
-
 test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[3]]]
 
-cluster_level(test_ds_for_ann,distance_type = "euclidean",optimal_clust_mode = "standard",n_bins_clust = 10)
+
+clust_lev(test_ds_for_ann,distance_type = "euclidean",optimal_clust_mode = "standard",n_bins_clust = 10)
 
 
 level_dist <- as.dist(1-cor(test_ds_for_ann))

@@ -31,7 +31,7 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 
 
 
-#' Cluster Level
+#' clust_lev
 #'
 #' Get clusters for a particular data level.
 #'
@@ -48,7 +48,7 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 #' #' \dontrun{
 #' cluster_level(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)
 #' }
-cluster_level <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
+clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
     return(NULL)
