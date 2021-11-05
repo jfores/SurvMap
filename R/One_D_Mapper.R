@@ -66,6 +66,7 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
     breaks_for_bins <- base::seq(from=min(heights), to=max_dist_lev, by=(max_dist_lev - base::min(heights))/n_bins_clust)
     #print(breaks_for_bins)
     histogram <- graphics::hist(c(heights,max_dist_lev), breaks=breaks_for_bins, plot=FALSE)
+    plot(histogram)
     #plot(histogram)
     hist_gap <- (histogram$counts == 0)
     if(all(!hist_gap)){
@@ -75,8 +76,15 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
       return(cluster_indices_level)
     }else{
       print("There is a gap... therefore potentially multiple clusters...")
-      trheshold_value <- histogram$mids[min(which(hist_gap == TRUE))]
+      print(histogram$mids)
+      print(hist_gap)
+      trheshold_value_a <- histogram$mids[min(which(hist_gap == TRUE))]
+      trheshold_value_b <- histogram$mids[min(which(hist_gap == TRUE))-1]
+      #trheshold_value <- (trheshold_value_a + trheshold_value_b)/2
+      trheshold_value <- trheshold_value_b
+      print(trheshold_value)
       print(paste("The threshold value is: ",base::round(trheshold_value,digits = 2),sep=""))
+      plot(level_hclust_out)
       cluster_indices_level <- base::as.vector(stats::cutree(level_hclust_out, h=trheshold_value))
       base::names(cluster_indices_level) <- base::colnames(dis_est_mod_lev)
       return(cluster_indices_level)

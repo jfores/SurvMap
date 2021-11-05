@@ -101,7 +101,7 @@ and seventeen derived from healthy breast mammary tissues.
 
 ```{r,eval=FALSE}
 library(SurvMap)
-install()
+
 #Loading data.
 data("GSE42568_Collapsed")
 bool_filt <- pData_FRMA$pCh_Status == "NT"
@@ -139,9 +139,9 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 #filt_data <- lp_norm_k_powers(Ds_for_an,p = 2,k = 1)
 
-filter_function <- lp_norm_k_powers_surv(Ds_for_an,4,2,cox_all)
+filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 
-int_data <- get_intervals_One_D(Ds_for_an,filter_function,3,0.7)
+int_data <- get_intervals_One_D(Ds_for_an,filter_function,10,0.2)
 
 #Find samples at each level.
 
@@ -153,10 +153,16 @@ int_data <- get_intervals_One_D(Ds_for_an,filter_function,3,0.7)
 
 number_of_bins <- 100
 
-test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[3]]]
+test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[9]]]
 
 
-clust_lev(test_ds_for_ann,distance_type = "euclidean",optimal_clust_mode = "standard",n_bins_clust = 10)
+
+length(test_ds_for_ann)
+
+
+clust_lev(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "standard",n_bins_clust = 10)
+
+
 
 
 level_dist <- as.dist(1-cor(test_ds_for_ann))
