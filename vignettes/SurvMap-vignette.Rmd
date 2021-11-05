@@ -117,6 +117,8 @@ class(Exp_NT_f)
 Exp_NT_f_d <- denoise_rectangular_matrix(Exp_NT_f)
 class(Exp_NT_f)
 
+
+
 cox_all <- cox_all_genes(Exp_T,pData_T$pCh_DFS_T,pData_T$pCh_DFS_E)
 
 #Creating the disease component matrix.
@@ -139,17 +141,17 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 #filt_data <- lp_norm_k_powers(Ds_for_an,p = 2,k = 1)
 
-filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
+filter_function <- lp_norm_k_powers_surv(Ds_for_an,4,2,cox_all)
 
 int_data <- get_intervals_One_D(Ds_for_an,filter_function,3,0.7)
 
 #Find samples at each level.
 
-filter_function[filter_function >= int_data[[1]][1] & filter_function < int_data[[1]][2]]
+#filter_function[filter_function >= int_data[[1]][1] & filter_function < int_data[[1]][2]]
 
-which(filter_function >= int_data[[3]][1] & filter_function < int_data[[3]][2])
+#which(filter_function >= int_data[[3]][1] & filter_function < int_data[[3]][2])
 
-lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)
+#lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)
 
 number_of_bins <- 100
 
@@ -181,9 +183,19 @@ for(i in 2:(length(level_hcluster_ouput$order)-1)){
   print(mean(test[,3]))
 }
 
+0.71-1.0
+A strong structure has been found
 
+0.51-0.70
+A reasonable structure has been found
 
+0.26-0.50
+The structure is weak and could be artificial. Try additional methods of data analysis.
 
+< 0.25
+No substantial structure has been found
+
+https://stats.stackexchange.com/questions/10540/how-to-interpret-mean-of-silhouette-plot
 test <- silhouette(cutree(level_hcluster_ouput,103),level_dist)
 plot(test)
 mean(test[,3])

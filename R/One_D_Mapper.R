@@ -34,6 +34,23 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 
 
 
+#' Cluster Level
+#'
+#' Get clusters for a particular data level.
+#'
+#' @param dis_est_mod_lev Disease estate data for the whole datasets and the selected genes.
+#' @param distance_type Type of distance , correlation, euclidean...
+#' @param optimal_clust_mode Method for selection optimal number of clusters. For the moment only the standard method has been implemented.
+#' @param n_bins_clust Number of bins in order to select the optimal threshold for number of cluster computations.
+#' @param level_name Name of the studied level.
+#'
+#' @return Returns the samples included in each cluster for the specific level analyzed.
+#' @export
+#'
+#' @examples
+#' #' \dontrun{
+#' cluster_level(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)
+#' }
 cluster_level <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
