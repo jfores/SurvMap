@@ -16,13 +16,12 @@ get_intervals_One_D(dis_st_mod, filt_vector, n_int, p)
 \item{p}{Percentage of overlap between intervals.}
 }
 \value{
-
+Returns the set of intervals for the filtering function.
 }
 \description{
-Extract intervals from filter function output values.
+This function constructs the intervals for a given filtering function.
 }
 \examples{
-#' \dontrun{
-get_intervals_One_D(dis_st_mod,filt_vector,n_int,p)
-}
+\dontrun{
+get_intervals_One_D(dis_st_mod,filt_vector,n_int,p)}
 }

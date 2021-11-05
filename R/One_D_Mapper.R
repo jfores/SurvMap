@@ -11,9 +11,8 @@
 #' @export
 #'
 #' @examples
-#' #' \dontrun{
-#' get_intervals_One_D(dis_st_mod,filt_vector,n_int,p)
-#' }
+#' \dontrun{
+#' get_intervals_One_D(dis_st_mod,filt_vector,n_int,p)}
 get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
   range_filt <- max(filt_vector) - min(filt_vector)
   n_ov <- n_int -1
@@ -45,43 +44,41 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 #' @export
 #'
 #' @examples
-#' #' \dontrun{
-#' cluster_level(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)
-#' }
+#' \dontrun{
+#' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}
 clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
     return(NULL)
   }
   else if(distance_type == "cor"){
-    level_dist <- stats::as.dist(1-cor(dis_est_mod_lev))
+    level_dist <- stats::as.dist(1-stats::cor(dis_est_mod_lev))
   }else{
-    level_dist <- dist(t(dis_est_mod_lev),method = distance_type)
-    print(level_dist)
+    level_dist <- stats::dist(base::t(dis_est_mod_lev),method = distance_type)
   }
-  max_dist_lev <- max(level_dist)
-  level_hclust_out <- hclust(level_dist,method="single")
+  max_dist_lev <- base::max(level_dist)
+  level_hclust_out <- stats::hclust(level_dist,method="single")
   if(!(optimal_clust_mode %in% c("standard","silhouette"))){
     print("Provide one of the specified optimal clustering method types")
     return(NULL)
   }else if(optimal_clust_mode == "standard"){
     heights <- level_hclust_out$height
-    breaks_for_bins <- seq(from=min(heights), to=max_dist_lev, by=(max_dist_lev - min(heights))/n_bins_clust)
+    breaks_for_bins <- base::seq(from=min(heights), to=max_dist_lev, by=(max_dist_lev - base::min(heights))/n_bins_clust)
     #print(breaks_for_bins)
-    histogram <- hist(c(heights,max_dist_lev), breaks=breaks_for_bins, plot=FALSE)
+    histogram <- graphics::hist(c(heights,max_dist_lev), breaks=breaks_for_bins, plot=FALSE)
     #plot(histogram)
     hist_gap <- (histogram$counts == 0)
     if(all(!hist_gap)){
       print("There is no gap... therefore only one cluster...")
-      cluster_indices_level <- rep(1,ncol(dis_est_mod_lev))
-      names(cluster_indices_level) <- colnames(dis_est_mod_lev)
+      cluster_indices_level <- base::rep(1,ncol(dis_est_mod_lev))
+      names(cluster_indices_level) <- base::colnames(dis_est_mod_lev)
       return(cluster_indices_level)
     }else{
       print("There is a gap... therefore potentially multiple clusters...")
       trheshold_value <- histogram$mids[min(which(hist_gap == TRUE))]
-      print(paste("The threshold value is: ",round(trheshold_value,digits = 2),sep=""))
-      cluster_indices_level <- as.vector(cutree(level_hclust_out, h=trheshold_value))
-      names(cluster_indices_level) <- colnames(dis_est_mod_lev)
+      print(paste("The threshold value is: ",base::round(trheshold_value,digits = 2),sep=""))
+      cluster_indices_level <- base::as.vector(stats::cutree(level_hclust_out, h=trheshold_value))
+      base::names(cluster_indices_level) <- base::colnames(dis_est_mod_lev)
       return(cluster_indices_level)
     }
   }else if(optimal_clust_mode == "silhouette"){
