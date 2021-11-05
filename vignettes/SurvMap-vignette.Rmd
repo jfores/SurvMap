@@ -167,11 +167,10 @@ level_max_dist <- max(level_dist)
 
 level_hcluster_ouput <- hclust(level_dist,method="single")
 
-
-
 cluster::silhouette(cutree(level_hcluster_ouput,4),level_dist)
 
 length(level_hcluster_ouput$order)
+
 
 
 
