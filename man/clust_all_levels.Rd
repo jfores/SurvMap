@@ -2,7 +2,7 @@
 % Please edit documentation in R/One_D_Mapper.R
 \name{clust_all_levels}
 \alias{clust_all_levels}
-\title{clast_all_levels}
+\title{clust_all_levels}
 \usage{
 clust_all_levels(
   Dis_Est_Mod,
@@ -27,7 +27,7 @@ clust_all_levels(
 Returns a list including the clusters found at each level.
 }
 \description{
-clast_all_levels
+clust_all_levels
 }
 \examples{
 \dontrun{
