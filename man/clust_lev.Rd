@@ -7,7 +7,7 @@
 clust_lev(
   dis_est_mod_lev,
   distance_type = c("cor", "euclidean"),
-  optimal_clust_mode = c("standard", "silhouette"),
+  optimal_clust_mode = c("standard", ""),
   n_bins_clust = 10,
   level_name = "level_1"
 )
@@ -31,5 +31,5 @@ Get clusters for a particular data level.
 }
 \examples{
 \dontrun{
-clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}
+clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}silhouette
 }

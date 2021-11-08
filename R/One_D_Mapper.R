@@ -45,8 +45,8 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 #'
 #' @examples
 #' \dontrun{
-#' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}
-clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
+#' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}silhouette
+clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard",""),n_bins_clust = 10,level_name = "level_1"){
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
     return(NULL)
@@ -84,13 +84,31 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
       trheshold_value <- trheshold_value_b
       print(trheshold_value)
       print(paste("The threshold value is: ",base::round(trheshold_value,digits = 2),sep=""))
-      plot(level_hclust_out)
+      #plot(level_hclust_out)
       cluster_indices_level <- base::as.vector(stats::cutree(level_hclust_out, h=trheshold_value))
       base::names(cluster_indices_level) <- base::colnames(dis_est_mod_lev)
       return(cluster_indices_level)
     }
   }else if(optimal_clust_mode == "silhouette"){
-      print("To do...")
+    print("To do...")
+    max_dist_lev <- base::max(level_dist)
+    level_hclust_out <- stats::hclust(level_dist,method="single")
+    n_clust <- c()
+    av_sil <- c()
+    for(i in 2:(length(level_hclust_out$order)-1)){
+      n_clust <- c(n_clust,i)
+      test <- cluster::silhouette(stats::cutree(level_hclust_out,i),level_dist)
+      av_sil <- c(av_sil,mean(test[,3]))
+    }
+    print(max(av_sil))
+    if(max(av_sil) >= 0.25){
+      op_clust <- n_clust[which.max(av_sil)]
+      cluster_indices_level <- stats::cutree(level_hclust_out,op_clust)
+      return(cluster_indices_level)
+    }else{
+      cluster_indices_level <- stats::cutree(level_hclust_out,1)
+      return(cluster_indices_level)
+    }
   }
 }
 

@@ -101,6 +101,7 @@ and seventeen derived from healthy breast mammary tissues.
 
 ```{r,eval=FALSE}
 library(SurvMap)
+library(devtools)
 
 #Loading data.
 data("GSE42568_Collapsed")
@@ -116,6 +117,8 @@ Exp_NT_f <- flatten_normal_tiss(Exp_NT)
 class(Exp_NT_f)
 Exp_NT_f_d <- denoise_rectangular_matrix(Exp_NT_f)
 class(Exp_NT_f)
+
+#Compute desease free survival cox proportional hazard models for all genes based on their expression levels.
 
 cox_all <- cox_all_genes(Exp_T,pData_T$pCh_DFS_T,pData_T$pCh_DFS_E)
 
@@ -141,7 +144,7 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 
-int_data <- get_intervals_One_D(Ds_for_an,filter_function,10,0.2)
+int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 5,p = 0.8)
 
 #Find samples at each level.
 
@@ -153,38 +156,60 @@ int_data <- get_intervals_One_D(Ds_for_an,filter_function,10,0.2)
 
 number_of_bins <- 100
 
-test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[9]]]
 
 
+test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[5]]]
 
 length(test_ds_for_ann)
 
+load_all()
+
 
 clust_lev(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "standard",n_bins_clust = 10)
+clust_lev(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "silhouette",n_bins_clust = 10)
+
+dev.off()
+
 
 
 
 
 level_dist <- as.dist(1-cor(test_ds_for_ann))
+level_hcluster_ouput <- hclust(level_dist,method="single")
+
+for(i in 2:(ncol(test_ds_for_ann)-1)){
+  print(cluster::silhouette(cutree(level_hcluster_ouput,4),level_dist))
+}
+
+
+cutree(level_hcluster_ouput,1)
+
+
+
+
 
 #level_dist <- dist(test_ds_for_ann,method = "euclidean")
 
+
+library(cluster)
+
 level_max_dist <- max(level_dist)
-
 level_hcluster_ouput <- hclust(level_dist,method="single")
-
-cluster::silhouette(cutree(level_hcluster_ouput,4),level_dist)
-
 length(level_hcluster_ouput$order)
 
-
-
-
+n_clust <- c()
+av_sil <- c()
 for(i in 2:(length(level_hcluster_ouput$order)-1)){
-  print(i)
+  n_clust <- c(n_clust,i)
   test <- silhouette(cutree(level_hcluster_ouput,i),level_dist)
-  print(mean(test[,3]))
+  av_sil <- c(av_sil,mean(test[,3]))
 }
+
+plot(n_clust,av_sil)
+cutree(level_hcluster_ouput,2)
+
+
+
 
 0.71-1.0
 A strong structure has been found
