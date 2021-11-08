@@ -154,10 +154,10 @@ node_samples <- levels_to_nodes(test_clust_all_levels)
 
 adj_matrix_out <- compute_node_adjacency(node_samples)
 
-library(igraph)
+#library(igraph)
 
-igraph_test <- graph_from_adjacency_matrix(adj_matrix_out,mode = "undirected")
-plot(igraph_test)
+#igraph_test <- graph_from_adjacency_matrix(adj_matrix_out,mode = "undirected")
+#plot(igraph_test)
 
 #Find samples at each level.
 
