@@ -144,7 +144,20 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 
-int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 5,p = 0.8)
+int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 10,p = 0.3)
+
+sam_in_lev <- samples_in_levels(int_data,filter_function)
+
+test_clust_all_levels <- clust_all_levels(Dis_Est_Mod = Ds_for_an,samp_in_lev = sam_in_lev,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)
+
+node_samples <- levels_to_nodes(test_clust_all_levels)
+
+adj_matrix_out <- compute_node_adjacency(node_samples)
+
+library(igraph)
+
+igraph_test <- graph_from_adjacency_matrix(adj_matrix_out,mode = "undirected")
+plot(igraph_test)
 
 #Find samples at each level.
 
@@ -154,8 +167,10 @@ int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 5,p = 0.8)
 
 #lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)
 
-number_of_bins <- 100
 
+
+
+number_of_bins <- 100
 
 
 test_ds_for_ann <- Ds_for_an[,lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function)[[5]]]
@@ -168,13 +183,13 @@ load_all()
 clust_lev(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "standard",n_bins_clust = 10)
 clust_lev(test_ds_for_ann,distance_type = "cor",optimal_clust_mode = "silhouette",n_bins_clust = 10)
 
-dev.off()
 
 
 
 
 
-level_dist <- as.dist(1-cor(test_ds_for_ann))
+
+ <- as.dist(1-cor(test_ds_for_ann))
 level_hcluster_ouput <- hclust(level_dist,method="single")
 
 for(i in 2:(ncol(test_ds_for_ann)-1)){

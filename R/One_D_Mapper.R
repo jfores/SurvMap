@@ -45,8 +45,8 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 #'
 #' @examples
 #' \dontrun{
-#' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}silhouette
-clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard",""),n_bins_clust = 10,level_name = "level_1"){
+#' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}
+clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
     return(NULL)
@@ -81,7 +81,7 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
       trheshold_value_a <- histogram$mids[min(which(hist_gap == TRUE))]
       trheshold_value_b <- histogram$mids[min(which(hist_gap == TRUE))-1]
       #trheshold_value <- (trheshold_value_a + trheshold_value_b)/2
-      trheshold_value <- trheshold_value_b
+      trheshold_value <- trheshold_value_a
       print(trheshold_value)
       print(paste("The threshold value is: ",base::round(trheshold_value,digits = 2),sep=""))
       #plot(level_hclust_out)
@@ -110,5 +110,116 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
       return(cluster_indices_level)
     }
   }
+}
+
+
+#' samples_in_levels
+#'
+#' This function returns a list of vectors containing the samples included at each level.
+#'
+#' @param int_data Filter function intervals. The output list produced by the get_intervals_One_D function.
+#' @param filter_function A vector with the filtering function values for each included sample. It is the output of any of the available filtering functions.
+#'
+#' @return A list with the samples included in each of the levels.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' samples_in_levels(int_data,filter_function)}
+samples_in_levels <- function(int_data,filter_function){
+  return(lapply(int_data,function(x,y) names(which(y >= x[1] & y < x[2])),filter_function))
+}
+
+
+#' clust_all_levels
+#'
+#' @param Dis_Est_Mod Disease estate model data for the complete dataset.
+#' @param samp_in_lev A list including the samples placed at each level. It is the output of the samples_in_levels function.
+#' @param distance_type The distance type employed.
+#' @param optimal_clust_mode The optimal cluster method selection.
+#' @param n_bins_clust The number of bines for histogram threshold selection. Used in the standard method for optimal number of clusters selection.
+#'
+#' @return Returns a list including the clusters found at each level.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' samples_in_levels(Dis_Est_Mod,samp_in_lev)}
+clust_all_levels <- function(Dis_Est_Mod,samp_in_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10){
+  list_out <- base::list()
+  for(i in 1:base::length(samp_in_lev)){
+    if(length(samp_in_lev[[i]]) > 2){
+      clust_level_temp <- clust_lev(Dis_Est_Mod[,samp_in_lev[[i]]],distance_type = distance_type,optimal_clust_mode = optimal_clust_mode,n_bins_clust = n_bins_clust,level_name = base::paste("Level",i,sep="_"))
+    }else{
+      if(base::length(samp_in_lev[[i]]) < 3 & base::length(samp_in_lev[[i]]) > 0){
+        clust_level_temp <- base::rep(1,length(samp_in_lev[[i]]))
+        base::names(clust_level_temp) <- samp_in_lev[[i]]
+      }else if(length(samp_in_lev[[i]]) == 0){
+        clust_level_temp <- NA
+      }
+    }
+    list_out[[i]] <- clust_level_temp
+  }
+  base::names(list_out) <- base::names(samp_in_lev)
+  return(list_out)
+}
+
+
+
+
+#' levels_to_nodes
+#'
+#' Extract the nodes information based on the level clustering data.
+#'
+#' @param clust_all_levels_list A list obtained from the clust all levels function.
+#'
+#' @return A list including the sample content of each detected node.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' levels_to_nodes(clust_all_levels_list)}
+levels_to_nodes <- function(clust_all_levels_list){
+  node_counter <- c()
+  nodes_list <- list()
+  node_counter <- 1
+  for(i in 1:base::length(clust_all_levels_list)){
+    if(!base::all(base::is.na(clust_all_levels_list[[i]]))){
+      clusters <- base::unique(clust_all_levels_list[[i]])
+      for(j in 1:base::length(clusters)){
+        nodes_list[[base::paste("Node",node_counter,sep="_")]] <- base::names(clust_all_levels_list[[i]][clust_all_levels_list[[i]] == clusters[j]])
+        node_counter <- node_counter + 1
+      }
+    }
+  }
+  return(nodes_list)
+}
+
+
+
+#' compute_node_adjacency
+#'
+#' Computes the adjacency matrix.
+#'
+#' @param nodes_list A list with the sample content of each node.
+#'
+#' @return Returns a matrix object that stores a 1 if there are shared samples in two given nodos and a 0 otherwise.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' compute_node_adjacency(nodes_list)}
+compute_node_adjacency <- function(nodes_list){
+  adj_matrix <- base::matrix(0,nrow = base::length(nodes_list),ncol = base::length(nodes_list))
+  for(i in 1:(base::length(nodes_list)-1)){
+    for(j in (i+1):(base::length(nodes_list))){
+      if(length(base::intersect(nodes_list[[i]],nodes_list[[j]])) > 0){
+        adj_matrix[i,j] <- 1
+      }
+    }
+  }
+  base::colnames(adj_matrix) <- base::names(nodes_list)
+  base::rownames(adj_matrix) <- base::names(nodes_list)
+  return(adj_matrix)
 }
 
