@@ -223,3 +223,48 @@ compute_node_adjacency <- function(nodes_list){
   return(adj_matrix)
 }
 
+
+
+#' one_D_Mapper
+#'
+#' Wrapping function to carry out the complete process.
+#'
+#' @param Ds_for_an Disease-state model data for the complete dataset.
+#' @param filter_function Filtering function output. It is a vector containing the filtering function values for each sample.
+#' @param n_int Number of intervals used to create the first sample partition based on filtering values.
+#' @param p Maximum overlap between intervals. Expressed as a fraction from zero to one.
+#' @param distance_type Type of distance for the clustering procedure. Can be cor or euclidean.
+#' @param optimal_clust_mode Method to find the optimal number of clusters. Can be the standard method or the silhouette-based method.
+#' @param n_bins_clust Number of bing to generate the histogram employed by the standard optimal number of cluster finder method.
+#'
+#' @return Returns a list with different elements.
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)}
+one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10){
+  #Getting intervals.
+  int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = n_int,p = p)
+  #Getting samples on each interval.
+  sam_in_lev <- samples_in_levels(int_data,filter_function)
+  #Clustering all levels.
+  test_clust_all_levels <- clust_all_levels(Dis_Est_Mod = Ds_for_an,samp_in_lev = sam_in_lev,distance_type = distance_type,optimal_clust_mode =  optimal_clust_mode,n_bins_clust = n_bins_clust)
+  #Transforming levels into nodes.
+  node_samples <- levels_to_nodes(test_clust_all_levels)
+  #Computing adjacency matrix.
+  adj_matrix_out <- compute_node_adjacency(node_samples)
+  #Creating parameter vector
+  par_vec <- c(n_int,p,distance_type,optimal_clust_mode,n_bins_clust)
+  names(par_vec) <- c("n_int","distance_type","optimal_clust_mode","n_bins_clust")
+  data_out <- list()
+  #Generating an output list.
+  data_out$int_data <- int_data
+  data_out$samp_in_lev <- sam_in_lev
+  data_out$clust_all_levels <- test_clust_all_levels
+  data_out$node_samples <- node_samples
+  data_out$adj_matrix <- adj_matrix_out
+  data_out$parameters <- par_vec
+  return(data_out)
+}
+
