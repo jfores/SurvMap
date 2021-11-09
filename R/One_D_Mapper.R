@@ -256,7 +256,7 @@ one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_t
   adj_matrix_out <- compute_node_adjacency(node_samples)
   #Creating parameter vector
   par_vec <- c(n_int,p,distance_type,optimal_clust_mode,n_bins_clust)
-  names(par_vec) <- c("n_int","distance_type","optimal_clust_mode","n_bins_clust")
+  names(par_vec) <- c("n_int","p","distance_type","optimal_clust_mode","n_bins_clust")
   data_out <- list()
   #Generating an output list.
   data_out$int_data <- int_data

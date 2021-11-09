@@ -154,6 +154,9 @@ node_samples <- levels_to_nodes(test_clust_all_levels)
 
 adj_matrix_out <- compute_node_adjacency(node_samples)
 
+out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)
+
+
 #library(igraph)
 
 #igraph_test <- graph_from_adjacency_matrix(adj_matrix_out,mode = "undirected")
