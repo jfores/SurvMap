@@ -258,11 +258,13 @@ one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_t
   par_vec <- c(n_int,p,distance_type,optimal_clust_mode,n_bins_clust)
   names(par_vec) <- c("n_int","p","distance_type","optimal_clust_mode","n_bins_clust")
   data_out <- list()
-  #Generating an output list.
+  #Generating the output data list.
   data_out$int_data <- int_data
   data_out$samp_in_lev <- sam_in_lev
   data_out$clust_all_levels <- test_clust_all_levels
   data_out$node_samples <- node_samples
+  data_out$node_sizes <- unlist(lapply(node_samples,length))
+  data_out$node_av_filt <- lapply(node_samples,function(x,y) mean(y[x]),filter_function)
   data_out$adj_matrix <- adj_matrix_out
   data_out$parameters <- par_vec
   return(data_out)
