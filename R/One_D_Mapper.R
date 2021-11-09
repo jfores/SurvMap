@@ -211,8 +211,8 @@ levels_to_nodes <- function(clust_all_levels_list){
 #' compute_node_adjacency(nodes_list)}
 compute_node_adjacency <- function(nodes_list){
   adj_matrix <- base::matrix(0,nrow = base::length(nodes_list),ncol = base::length(nodes_list))
-  for(i in 1:(base::length(nodes_list)-1)){
-    for(j in (i+1):(base::length(nodes_list))){
+  for(i in 1:(base::length(nodes_list))){
+    for(j in i:(base::length(nodes_list))){
       if(length(base::intersect(nodes_list[[i]],nodes_list[[j]])) > 0){
         adj_matrix[i,j] <- 1
       }

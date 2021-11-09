@@ -154,11 +154,86 @@ node_samples <- levels_to_nodes(test_clust_all_levels)
 
 adj_matrix_out <- compute_node_adjacency(node_samples)
 
-out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.8,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)
+out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.2,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)
 
+library(igraph)
+
+igraph_test <- graph_from_adjacency_matrix(out_one_D$adj_matrix,mode = "undirected",diag = TRUE)
+
+
+
+
+plot(igraph_test,)
+
+View(out_one_D$adj_matrix)
+
+help("simpleNetwork")
+
+View(out_one_D$adj_matrix)
+
+as_long_data_frame(igraph_test)
+
+simpleNetwork(as_long_data_frame(igraph_test))
+vertex(igraph_test)
 out_one_D$node_sizes
 sum(out_one_D$node_sizes)
 
+###############
+###############
+#Protofunction#
+###############
+
+igraph_test <- graph_from_adjacency_matrix(out_one_D$adj_matrix,mode = "undirected",diag = TRUE)
+
+test_data <- as_long_data_frame(igraph_test)
+
+nodes_to_net <- unique(data.frame(c(test_data[,1]-1,test_data[,2]-1),c(test_data[,3],test_data[,4])))
+nodes_to_net$node_size <- out_one_D$node_sizes
+colnames(nodes_to_net) <- c("id","label","size")
+
+edges_to_net <- test_data[,c(1,2)]-1
+colnames(edges_to_net) <- c("from","to")
+
+#forceNetwork(Links = edges_to_net,Nodes = nodes_to_net,Source = "from", Target = "to",NodeID = "label",Group = "id",charge = -1,zoom = TRUE,Nodesize = "node_size", fontSize = 16,opacity = 1)
+#dev.off()
+#help("forceNetwork")
+
+visNetwork
+##################
+##################
+useSe
+install.packages("networkD3")
+library(networkD3)
+
+library(tidyverse)
+library("navdata")
+data("phone.call2")
+nodes <- phone.call2$nodes
+edges <- phone.call2$edges
+install_github("kassambara/navdata")
+
+nodes_d3 <- mutate(nodes, id = id - 1)
+edges_d3 <- mutate(edges, from = from - 1, to = to - 1)
+
+
+mypal <- colorRampPalette(colors = c("blue","red"))(100)
+
+map2color<-function(x,pal,limits=NULL){
+    if(is.null(limits)) limits=range(x)
+    pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pal)+1), all.inside=TRUE)]
+}
+
+nodes_to_net$color <- map2color(out_one_D$node_av_filt,mypal)
+
+install.packages("visNetwork")
+library(visNetwork)
+visNetwork(nodes_to_net,edges_to_net[!edges_to_net$from == edges_to_net$to,],)
+
+
+out_one_D$node_samples
+out_one_D$samp_in_lev
+out_one_D$clust_all_levels
+out_one_D$
 #https://www.cyclismo.org/tutorial/R/s4Classes.html#creating-methods Working with classes.
 
 #library(igraph)
