@@ -144,7 +144,7 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 
-int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 10,p = 0.3)
+#int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 10,p = 0.3)
 
 #sam_in_lev <- samples_in_levels(int_data,filter_function)
 
@@ -156,58 +156,55 @@ int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 10,p = 0.3)
 
 out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)
 
-arr_ind <- which(arr.ind = TRUE,out_one_D$adj_matrix == 1)
-df_out <- data.frame(rownames(out_one_D$adj_matrix)[arr_ind[,1]],colnames(out_one_D$adj_matrix)[arr_ind[,2]])
+plot_mapper(out_one_D)
 
+#arr_ind <- which(arr.ind = TRUE,out_one_D$adj_matrix == 1)
+#df_out <- data.frame(rownames(out_one_D$adj_matrix)[arr_ind[,1]],colnames(out_one_D$adj_matrix)[arr_ind[,2]])
+#df_out_b <- cbind(arr_ind,df_out)
+#rownames(df_out_b) <- 1:nrow(df_out_b)
+#colnames(df_out_b) <- c("from","to","from_Name","to_Name")
+#nodes_to_net <- unique(data.frame(c(df_out_b[,1]-1,df_out_b[,2]-1),c(df_out_b[,3],df_out_b[,4])))
+#nodes_to_net$node_size <- out_one_D$node_sizes
+#colnames(nodes_to_net) <- c("id","label","size")
+#nodes_to_net$color <- map_to_color(log2(unlist(out_one_D$node_av_filt) + 100))
 
-library(igraph)
-install.packages("igraph")
-install.packages("igraph")
+#edges_to_net <- test_data[,c(1,2)]-1
+#colnames(edges_to_net) <- c("from","to")
+#colnames(edges_to_net) <- c("from","to")
 
-igraph_test <- graph_from_adjacency_matrix(out_one_D$adj_matrix,mode = "undirected",diag = TRUE)
+#visNetwork(nodes_to_net,edges_to_net[!edges_to_net$from == edges_to_net$to,],)
 
-test_data <- as_long_data_frame(igraph_test)
+#colnames(df_out) <- c()
 
-nodes_to_net <- unique(data.frame(c(test_data[,1]-1,test_data[,2]-1),c(test_data[,3],test_data[,4])))
-nodes_to_net$node_size <- out_one_D$node_sizes
-colnames(nodes_to_net) <- c("id","label","size")
+#library(igraph)
+#install.packages("igraph")
+#install.packages("igraph")
 
-edges_to_net <- test_data[,c(1,2)]-1
-colnames(edges_to_net) <- c("from","to")
+#igraph_test <- graph_from_adjacency_matrix(out_one_D$adj_matrix,mode = "undirected",diag = TRUE)
 
-help("colorRampPalette")
-mypal <- colorRampPalette(colors = c("blue","red"))(100)
+#test_data <- as_long_data_frame(igraph_test)
+#class(test_data)
+
+#nodes_to_net <- unique(data.frame(c(test_data[,1]-1,test_data[,2]-1),c(test_data[,3],test_data[,4])))
+#nodes_to_net$node_size <- out_one_D$node_sizes
+#colnames(nodes_to_net) <- c("id","label","size")
+
+#edges_to_net <- test_data[,c(1,2)]-1
+#colnames(edges_to_net) <- c("from","to")
+
+#help("colorRampPalette")
+#mypal <- colorRampPalette(colors = c("blue","red"))(100)
 
 #map_to_color<-function(x,pallette,limits=NULL){
     #if(is.null(limits)) limits=range(x)
     #pal[findInterval(x,seq(limits[1],limits[2],length.out=length(pallette)+1), all.inside=TRUE)]
 #}
 
-nodes_to_net$color <- map_to_color(log2(unlist(out_one_D$node_av_filt) + 100))
+#nodes_to_net$color <- map_to_color(log2(unlist(out_one_D$node_av_filt) + 100))
 
-install.packages("visNetwork")
-library(visNetwork)
-visNetwork(nodes_to_net,edges_to_net[!edges_to_net$from == edges_to_net$to,],)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#install.packages("visNetwork")
+#library(visNetwork)
+#visNetwork(nodes_to_net,edges_to_net[!edges_to_net$from == edges_to_net$to,],)
 
 
 #plot(igraph_test)
