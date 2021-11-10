@@ -233,7 +233,7 @@ visNetwork(nodes_to_net,edges_to_net[!edges_to_net$from == edges_to_net$to,],)
 out_one_D$node_samples
 out_one_D$samp_in_lev
 out_one_D$clust_all_levels
-out_one_D$
+
 #https://www.cyclismo.org/tutorial/R/s4Classes.html#creating-methods Working with classes.
 
 #library(igraph)
