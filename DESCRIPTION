@@ -16,9 +16,11 @@ RoxygenNote: 7.1.2
 Imports: 
     base,
     cluster,
+    grDevices,
     stats,
     survival,
-    utils
+    utils,
+    visNetwork
 Suggests: 
     rmarkdown,
     knitr,
