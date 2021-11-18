@@ -81,10 +81,38 @@ threshold_singular <- median(svd_Xnoisy_r$d)*omega_found
 up_to_sv <- length(svd_Xnoisy_r$d[svd_Xnoisy_r$d > threshold_singular])
 D_filt <- D
 diag(D_filt)[(up_to_sv + 1):length(diag(D_filt))] <- 0
+Xnoisy_denoised_A <- U %*% D_filt %*% t(V)
+dim(Xnoisy_denoised_A)
+image(t(Xnoisy_denoised_A))
+```
+
+New way of denoising 
+```{r}
+omega_found <- get_omega(ncol(Xnoisy_r)/nrow(Xnoisy_r))
+svd_Xnoisy_r <- svd(Xnoisy_r)
+D <- diag(svd_Xnoisy_r$d)
+U <- svd_Xnoisy_r$u
+V <- svd_Xnoisy_r$v
+threshold_singular <- median(svd_Xnoisy_r$d)*omega_found
+up_to_sv <- length(svd_Xnoisy_r$d[svd_Xnoisy_r$d > threshold_singular])
+D_filt <- D
+
+Xnoisy_denoised_B <- U[,1:up_to_sv] %*% D_filt[1:up_to_sv,1:up_to_sv] %*% t(V[,1:up_to_sv])
+
+dim(Xnoisy_denoised_A) == dim(Xnoisy_denoised_B)
+table(Xnoisy_denoised_A == Xnoisy_denoised_B)
+
+abs(Xnoisy_denoised_A[Xnoisy_denoised_A != Xnoisy_denoised_B] - Xnoisy_denoised_B[Xnoisy_denoised_A != Xnoisy_denoised_B])
+
+
+diag(D_filt)[(up_to_sv + 1):length(diag(D_filt))] <- 0
 Xnoisy_denoised <- U %*% D_filt %*% t(V)
 dim(Xnoisy_denoised)
-image(t(Xnoisy_denoised))
+image(t(Xnoisy_denoised_B))
+dev.off()
 ```
+
+
 
 ```{r,fig.dim = c(5,7),fig.align = 'center'}
 denoised_matrix <- denoise_rectangular_matrix(Xnoisy_r)
