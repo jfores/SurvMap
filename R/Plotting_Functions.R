@@ -32,7 +32,7 @@ map_to_color <- function(x,limits=NULL){
 #' @examples
 #' \dontrun{
 #' plot_mapper(mapper_list)}
-plot_mapper <- function(mapper_list){
+plot_mapper <- function(mapper_list,log_node_size = TRUE){
   arr_ind <- base::which(arr.ind = TRUE,mapper_list$adj_matrix == 1)
   df_out <- base::data.frame(base::rownames(mapper_list$adj_matrix)[arr_ind[,1]],base::colnames(mapper_list$adj_matrix)[arr_ind[,2]])
   df_out <- base::cbind(arr_ind,df_out)
@@ -40,6 +40,9 @@ plot_mapper <- function(mapper_list){
   base::colnames(df_out) <- c("from","to","from_Name","to_Name")
   nodes_to_net <- base::unique(base::data.frame(c(df_out[,1]-1,df_out[,2]-1),c(df_out[,3],df_out[,4])))
   nodes_to_net$node_size <- mapper_list$node_sizes
+  if(log_node_size){
+    nodes_to_net$node_size <- log(nodes_to_net$node_size)
+  }
   base::colnames(nodes_to_net) <- c("id","label","size")
   nodes_to_net$color <- map_to_color(base::log2(base::unlist(mapper_list$node_av_filt) + 2))
   edges_to_net <- df_out[,c(1,2)]-1
