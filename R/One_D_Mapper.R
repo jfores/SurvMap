@@ -243,7 +243,7 @@ compute_node_adjacency <- function(nodes_list){
 #' @examples
 #' \dontrun{
 #' one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)}
-one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10){
+one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10,log_node_size = TRUE){
   #Getting intervals.
   int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = n_int,p = p)
   #Getting samples on each interval.
@@ -264,6 +264,9 @@ one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_t
   data_out$clust_all_levels <- test_clust_all_levels
   data_out$node_samples <- node_samples
   data_out$node_sizes <- unlist(lapply(node_samples,length))
+  if(log_node_size){
+    data_out$node_sizes <- log(data_out$node_sizes)
+  }
   data_out$node_av_filt <- lapply(node_samples,function(x,y) mean(y[x]),filter_function)
   data_out$adj_matrix <- adj_matrix_out
   data_out$parameters <- par_vec
