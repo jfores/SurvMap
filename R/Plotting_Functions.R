@@ -25,14 +25,14 @@ map_to_color <- function(x,limits=NULL){
 #' This function produces an interactive network plot using the visNetork function.
 #'
 #' @param mapper_list A list produced as an output of the one_D_Mapper function.
-#'
+#' @param exp_to_res  An exponent in the form 1/n to wich the node sizes have to be exponentiatent in order to resize them.
 #' @return Plots an interactive network using the visNetwork function.
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' plot_mapper(mapper_list)}
-plot_mapper <- function(mapper_list,log_node_size = TRUE){
+plot_mapper <- function(mapper_list,trans_node_size = TRUE,exp_to_res = 1/2){
   arr_ind <- base::which(arr.ind = TRUE,mapper_list$adj_matrix == 1)
   df_out <- base::data.frame(base::rownames(mapper_list$adj_matrix)[arr_ind[,1]],base::colnames(mapper_list$adj_matrix)[arr_ind[,2]])
   df_out <- base::cbind(arr_ind,df_out)
@@ -40,8 +40,8 @@ plot_mapper <- function(mapper_list,log_node_size = TRUE){
   base::colnames(df_out) <- c("from","to","from_Name","to_Name")
   nodes_to_net <- base::unique(base::data.frame(c(df_out[,1]-1,df_out[,2]-1),c(df_out[,3],df_out[,4])))
   nodes_to_net$node_size <- mapper_list$node_sizes
-  if(log_node_size){
-    nodes_to_net$node_size <- log(nodes_to_net$node_size)
+  if(trans_node_size){
+    nodes_to_net$node_size <- (nodes_to_net$node_size)^exp_to_res
   }
   base::colnames(nodes_to_net) <- c("id","label","size")
   nodes_to_net$color <- map_to_color(base::log2(base::unlist(mapper_list$node_av_filt) + 2))
