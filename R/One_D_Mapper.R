@@ -100,7 +100,7 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
       test <- cluster::silhouette(stats::cutree(level_hclust_out,i),level_dist)
       av_sil <- c(av_sil,mean(test[,3]))
     }
-    print(max(av_sil))
+    print(av_sil)
     if(max(av_sil) >= 0.25){
       op_clust <- n_clust[which.max(av_sil)]
       cluster_indices_level <- stats::cutree(level_hclust_out,op_clust)
