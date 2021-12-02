@@ -46,7 +46,7 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 #' @examples
 #' \dontrun{
 #' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}
-clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
+clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),clust_type = c("hierarchical","PAM"),linkage_type = c("single","average","complete"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
     return(NULL)
@@ -57,7 +57,9 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),optim
     level_dist <- stats::dist(base::t(dis_est_mod_lev),method = distance_type)
   }
   max_dist_lev <- base::max(level_dist)
-  level_hclust_out <- stats::hclust(level_dist,method="single")
+  if(clust_type == "hierarchical"){
+    level_hclust_out <- stats::hclust(level_dist,method = linkage_type)
+  }
   if(!(optimal_clust_mode %in% c("standard","silhouette"))){
     print("Provide one of the specified optimal clustering method types")
     return(NULL)
@@ -145,11 +147,11 @@ samples_in_levels <- function(int_data,filter_function){
 #' @examples
 #' \dontrun{
 #' samples_in_levels(Dis_Est_Mod,samp_in_lev)}
-clust_all_levels <- function(Dis_Est_Mod,samp_in_lev,distance_type = c("cor","euclidean"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10){
+clust_all_levels <- function(Dis_Est_Mod,samp_in_lev,distance_type = c("cor","euclidean"),clust_type = c("hierarchical","PAM"),linkage_type = c("single","average","complete"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10){
   list_out <- base::list()
   for(i in 1:base::length(samp_in_lev)){
     if(length(samp_in_lev[[i]]) > 2){
-      clust_level_temp <- clust_lev(Dis_Est_Mod[,samp_in_lev[[i]]],distance_type = distance_type,optimal_clust_mode = optimal_clust_mode,n_bins_clust = n_bins_clust,level_name = base::paste("Level",i,sep="_"))
+      clust_level_temp <- clust_lev(Dis_Est_Mod[,samp_in_lev[[i]]],distance_type = distance_type,clust_type = clust_type,linkage_type = linkage_type, optimal_clust_mode = optimal_clust_mode, n_bins_clust = n_bins_clust, level_name = base::paste("Level",i,sep="_"))
     }else{
       if(base::length(samp_in_lev[[i]]) < 3 & base::length(samp_in_lev[[i]]) > 0){
         clust_level_temp <- base::rep(1,length(samp_in_lev[[i]]))
@@ -243,7 +245,7 @@ compute_node_adjacency <- function(nodes_list){
 #' @examples
 #' \dontrun{
 #' one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)}
-one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10){
+one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "hierarchical",linkage_type = "single", optimal_clust_mode =  "standard",n_bins_clust = 10){
   #Getting intervals.
   int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = n_int,p = p)
   #Getting samples on each interval.
