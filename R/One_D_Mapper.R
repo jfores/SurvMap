@@ -46,7 +46,27 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
 #' @examples
 #' \dontrun{
 #' clust_lev(dis_est_mod_lev,distance_type,optimal_clust_mode,n_bins_clust,level_name)}
-clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),clust_type = c("hierarchical","PAM"),linkage_type = c("single","average","complete"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10,level_name = "level_1"){
+clust_lev <- function(dis_est_mod_lev,distance_type = "cor",clust_type = "hierarchical",linkage_type = "single",optimal_clust_mode = "standard",n_bins_clust = 10,level_name = "level_1"){
+  distances <- c("cor","euclidean")
+  test_distances <- pmatch(distance_type,distances)
+  if(is.na(test_distances)){
+    stop(paste("Invalid distance selected. Choose one of the folowing:", paste(distances,collapse = ", ")))
+  }
+  clust_types <- c("hierarchical","PAM")
+  test_clust_types <- pmatch(clust_type,clust_types)
+  if(is.na(test_clust_types)){
+    stop(paste("Invalid clustering method selected. Choose one of the folowing:", paste(clust_types,collapse = ", ")))
+  }
+  linkage_types <- c("single","average","complete")
+  test_linkage_types <- pmatch(linkage_type,linkage_types)
+  if(is.na(test_linkage_types)){
+    stop(paste("Invalid linkage method selected. Choose one of the folowing:", paste(linkage_types,collapse = ", ")))
+  }
+  optimal_clust_modes <- c("standard","silhouette")
+  test_optimal_clust_modes <- pmatch(optimal_clust_mode,optimal_clust_modes)
+  if(is.na(test_optimal_clust_modes)){
+    stop(paste("Invalid optimal cluster number method selected. Choose one of the folowing:", paste(optimal_clust_modes,collapse = ", ")))
+  }
   if(!(distance_type %in% c("cor","euclidean"))){
     print("Provide one of the specified distance types")
     return(NULL)
@@ -58,8 +78,9 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),clust
   }
   max_dist_lev <- base::max(level_dist)
   if(clust_type == "hierarchical"){
+    print("It is hierarchical clustering...")
     level_hclust_out <- stats::hclust(level_dist,method = linkage_type)
-  }
+  #}
   if(!(optimal_clust_mode %in% c("standard","silhouette"))){
     print("Provide one of the specified optimal clustering method types")
     return(NULL)
@@ -77,24 +98,23 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),clust
       names(cluster_indices_level) <- base::colnames(dis_est_mod_lev)
       return(cluster_indices_level)
     }else{
-      print("There is a gap... therefore potentially multiple clusters...")
-      print(histogram$mids)
-      print(hist_gap)
+      #print("There is a gap... therefore potentially multiple clusters...")
+      #print(histogram$mids)
+      #print(hist_gap)
       trheshold_value_a <- histogram$mids[min(which(hist_gap == TRUE))]
       trheshold_value_b <- histogram$mids[min(which(hist_gap == TRUE))-1]
       #trheshold_value <- (trheshold_value_a + trheshold_value_b)/2
       trheshold_value <- trheshold_value_a
-      print(trheshold_value)
-      print(paste("The threshold value is: ",base::round(trheshold_value,digits = 2),sep=""))
+      #print(trheshold_value)
+      #print(paste("The threshold value is: ",base::round(trheshold_value,digits = 2),sep=""))
       #plot(level_hclust_out)
       cluster_indices_level <- base::as.vector(stats::cutree(level_hclust_out, h=trheshold_value))
       base::names(cluster_indices_level) <- base::colnames(dis_est_mod_lev)
       return(cluster_indices_level)
     }
   }else if(optimal_clust_mode == "silhouette"){
-    print("To do...")
     max_dist_lev <- base::max(level_dist)
-    level_hclust_out <- stats::hclust(level_dist,method="single")
+    level_hclust_out <- stats::hclust(level_dist,method=linkage_type)
     n_clust <- c()
     av_sil <- c()
     for(i in 2:(length(level_hclust_out$order)-1)){
@@ -102,13 +122,38 @@ clust_lev <- function(dis_est_mod_lev,distance_type = c("cor","euclidean"),clust
       test <- cluster::silhouette(stats::cutree(level_hclust_out,i),level_dist)
       av_sil <- c(av_sil,mean(test[,3]))
     }
-    print(av_sil)
+    #print(av_sil)
     if(max(av_sil) >= 0.25){
       op_clust <- n_clust[which.max(av_sil)]
       cluster_indices_level <- stats::cutree(level_hclust_out,op_clust)
       return(cluster_indices_level)
     }else{
       cluster_indices_level <- stats::cutree(level_hclust_out,1)
+      return(cluster_indices_level)
+    }
+  }
+  }#Este es el que he puesto extra.
+  else if(clust_type == "PAM"){
+    print("PAM clustering")
+    av_sil <- c()
+    n_clust <- c()
+    for(i in 1:(ncol(dis_est_mod_lev)-1)){
+      temp_clust <- cluster::pam(x =level_dist,diss = TRUE,k = i)
+      if(i == 1){
+        av_sil <- c(av_sil,0)
+        n_clust <- c(n_clust,1)
+      }else{
+        av_sil <-c(av_sil,mean(cluster::silhouette(temp_clust$clustering,level_dist)[,3]))
+        n_clust <- c(n_clust,i)
+      }
+    }
+    if(max(av_sil) >= 0.25){
+      op_clust <- n_clust[which.max(av_sil)]
+      cluster_indices_level <- cluster::pam(x =level_dist,diss = TRUE,k = op_clust)$clustering
+      return(cluster_indices_level)
+    }else{
+      cluster_indices_level <- rep(1,ncol(dis_est_mod_lev))
+      names(cluster_indices_level) <- colnames(dis_est_mod_lev)
       return(cluster_indices_level)
     }
   }
@@ -147,7 +192,27 @@ samples_in_levels <- function(int_data,filter_function){
 #' @examples
 #' \dontrun{
 #' samples_in_levels(Dis_Est_Mod,samp_in_lev)}
-clust_all_levels <- function(Dis_Est_Mod,samp_in_lev,distance_type = c("cor","euclidean"),clust_type = c("hierarchical","PAM"),linkage_type = c("single","average","complete"),optimal_clust_mode = c("standard","silhouette"),n_bins_clust = 10){
+clust_all_levels <- function(Dis_Est_Mod,samp_in_lev,distance_type = "cor",clust_type = "hierarchical",linkage_type = "single",optimal_clust_mode = "standard",n_bins_clust = 10){
+  distances <- c("cor","euclidean")
+  test_distances <- pmatch(distance_type,distances)
+  if(is.na(test_distances)){
+    stop(paste("Invalid distance selected. Choose one of the folowing:", paste(distances,collapse = ", ")))
+  }
+  clust_types <- c("hierarchical","PAM")
+  test_clust_types <- pmatch(clust_type,clust_types)
+  if(is.na(test_clust_types)){
+    stop(paste("Invalid clustering method selected. Choose one of the folowing:", paste(clust_types,collapse = ", ")))
+  }
+  linkage_types <- c("single","average","complete")
+  test_linkage_types <- pmatch(linkage_type,linkage_types)
+  if(is.na(test_linkage_types)){
+    stop(paste("Invalid linkage method selected. Choose one of the folowing:", paste(linkage_types,collapse = ", ")))
+  }
+  optimal_clust_modes <- c("standard","silhouette")
+  test_optimal_clust_modes <- pmatch(optimal_clust_mode,optimal_clust_modes)
+  if(is.na(test_optimal_clust_modes)){
+    stop(paste("Invalid optimal cluster number method selected. Choose one of the folowing:", paste(optimal_clust_modes,collapse = ", ")))
+  }
   list_out <- base::list()
   for(i in 1:base::length(samp_in_lev)){
     if(length(samp_in_lev[[i]]) > 2){
@@ -246,12 +311,32 @@ compute_node_adjacency <- function(nodes_list){
 #' \dontrun{
 #' one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)}
 one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "hierarchical",linkage_type = "single", optimal_clust_mode =  "standard",n_bins_clust = 10){
+  distances <- c("cor","euclidean")
+  test_distances <- pmatch(distance_type,distances)
+  if(is.na(test_distances)){
+    stop(paste("Invalid distance selected. Choose one of the folowing:", paste(distances,collapse = ", ")))
+  }
+  clust_types <- c("hierarchical","PAM")
+  test_clust_types <- pmatch(clust_type,clust_types)
+  if(is.na(test_clust_types)){
+    stop(paste("Invalid clustering method selected. Choose one of the folowing:", paste(clust_types,collapse = ", ")))
+  }
+  linkage_types <- c("single","average","complete")
+  test_linkage_types <- pmatch(linkage_type,linkage_types)
+  if(is.na(test_linkage_types)){
+    stop(paste("Invalid linkage method selected. Choose one of the folowing:", paste(linkage_types,collapse = ", ")))
+  }
+  optimal_clust_modes <- c("standard","silhouette")
+  test_optimal_clust_modes <- pmatch(optimal_clust_mode,optimal_clust_modes)
+  if(is.na(test_optimal_clust_modes)){
+    stop(paste("Invalid optimal cluster number method selected. Choose one of the folowing:", paste(optimal_clust_modes,collapse = ", ")))
+  }
   #Getting intervals.
   int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = n_int,p = p)
   #Getting samples on each interval.
   sam_in_lev <- samples_in_levels(int_data,filter_function)
   #Clustering all levels.
-  test_clust_all_levels <- clust_all_levels(Dis_Est_Mod = Ds_for_an,samp_in_lev = sam_in_lev,distance_type = distance_type,optimal_clust_mode =  optimal_clust_mode,n_bins_clust = n_bins_clust)
+  test_clust_all_levels <- clust_all_levels(Dis_Est_Mod = Ds_for_an,samp_in_lev = sam_in_lev,distance_type = distance_type, clust_type = clust_type, optimal_clust_mode =  optimal_clust_mode,n_bins_clust = n_bins_clust)
   #Transforming levels into nodes.
   node_samples <- levels_to_nodes(test_clust_all_levels)
   #Computing adjacency matrix.
@@ -260,6 +345,13 @@ one_D_Mapper <- function(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_t
   par_vec <- c(n_int,p,distance_type,optimal_clust_mode,n_bins_clust)
   names(par_vec) <- c("n_int","p","distance_type","optimal_clust_mode","n_bins_clust")
   data_out <- list()
+  if(clust_type == "PAM"){
+    par_vec[4] <- "silhouette"
+    par_vec[5] <- NA
+  }
+  if(optimal_clust_mode == "silhouette"){
+    par_vec[5] <- NA
+  }
   #Generating the output data list.
   data_out$int_data <- int_data
   data_out$samp_in_lev <- sam_in_lev

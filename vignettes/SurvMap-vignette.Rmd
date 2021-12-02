@@ -172,6 +172,8 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 
+
+
 #int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 10,p = 0.3)
 
 #sam_in_lev <- samples_in_levels(int_data,filter_function)
@@ -181,11 +183,45 @@ filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 #node_samples <- levels_to_nodes(test_clust_all_levels)
 
 #adj_matrix_out <- compute_node_adjacency(node_samples)
+install()
+library(SurvMap)
 
-out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",optimal_clust_mode =  "standard",n_bins_clust = 10)
+hclust(Ds_for_an)
+level_dist <- stats::as.dist(1-stats::cor(Ds_for_an))
+test <- hclust(level_dist)
+test_2 <- cluster::silhouette(stats::cutree(test,2),level_dist)
+test_3 <- cluster::pam(x =level_dist,diss = TRUE,k = 2)
+test_3$clustering
+test_4 <- cluster::silhouette(test_3$clustering,level_dist)
+a_mean <- mean(test_4[test_4[,2] == 2,3])
+b_mean <- mean(test_4[test_4[,2] == 1,3])
+(a_mean + b_mean)/2
+mean(test_4[,3])
 
-plot_mapper(out_one_D)
 
+test_aa <- clust_lev(Ds_for_an,distance_type = "euclidean",clust_type = "PAM",linkage_type = "single",optimal_clust_mode = "standard",n_bins_clust = 40)
+
+test_bb <- clust_lev(Ds_for_an,distance_type = "euclidean",clust_type = "hierarchical",linkage_type = "single",optimal_clust_mode = "standard",n_bins_clust = 40)
+
+names(test_aa) == names(test_bb)
+
+
+if("test" %in% c("test","toast")){
+  print("yes")
+}
+
+out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "hierarchical",linkage_type = "complete",optimal_clust_mode =  "standard",n_bins_clust = 10)
+plot_mapper(out_one_D,trans_node_size = FALSE)
+
+out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "PAM",linkage_type = "complete",optimal_clust_mode =  "standard",n_bins_clust = 10)
+warnings()
+
+out_one_D$clust_all_levels
+plot_mapper(out_one_D,trans_node_size = FALSE)
+install(SurvMap)
+library(cluster)
+pam(t(Ds_for_an),k = 4)
+help(pam)
 #arr_ind <- which(arr.ind = TRUE,out_one_D$adj_matrix == 1)
 #df_out <- data.frame(rownames(out_one_D$adj_matrix)[arr_ind[,1]],colnames(out_one_D$adj_matrix)[arr_ind[,2]])
 #df_out_b <- cbind(arr_ind,df_out)
