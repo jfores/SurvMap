@@ -172,6 +172,43 @@ Ds_for_an <- Disease_component[selected_genes,]
 
 filter_function <- lp_norm_k_powers_surv(Ds_for_an,2,1,cox_all)
 
+out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "hierarchical",linkage_type = "complete",optimal_clust_mode =  "standard",n_bins_clust = 10)
+plot_mapper(out_one_D,trans_node_size = FALSE)
+
+out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.2,distance_type = "cor",clust_type = "PAM",linkage_type = "complete",optimal_clust_mode =  "standard",n_bins_clust = 10)
+plot_mapper(out_one_D,trans_node_size = FALSE)
+
+
+test_a <- lapply(out_one_D$node_samples,function(x,y)y[,x],Ds_for_an)
+test_b <- lapply(test_a,function(x) prcomp(t(x),center =T)$rotation[,1])
+test_c <- out_one_D$node_samples
+reasigned_nodes <- c()
+for(i in 1:nrow(pData_FRMA)){
+  sample_temp <- rownames(pData_FRMA)[i]
+  print(sample_temp)
+  which_nodes <- unlist(lapply(test_c,function(x,y) y %in% x,sample_temp)) 
+  nodes_temp <- names(which_nodes[which_nodes == TRUE])
+  print(nodes_temp)
+  cors_to_nodes <- c()
+  for(j in 1:length(nodes_temp)){
+    cors_to_nodes <- c(cors_to_nodes,cor(test_b[[nodes_temp[j]]],Ds_for_an[,sample_temp]))
+  }
+  reasigned_nodes <- c(reasigned_nodes,print(nodes_temp[which.max(abs(cors_to_nodes))]))
+}
+pData_FRMA$reasigned_nodes <- reasigned_nodes
+View(pData_FRMA)
+
+
+
+
+help(prcomp)
+
+test_b <- prcomp(t(test_a$Node_12)[,1])
+test_b$rotation
+prcomp(t(test_a$Node_13))
+
+split()
+
 
 
 #int_data <- get_intervals_One_D(Ds_for_an,filter_function,n_int = 10,p = 0.3)
@@ -201,6 +238,7 @@ mean(test_4[,3])
 
 test_aa <- clust_lev(Ds_for_an,distance_type = "euclidean",clust_type = "PAM",linkage_type = "single",optimal_clust_mode = "standard",n_bins_clust = 40)
 
+
 test_bb <- clust_lev(Ds_for_an,distance_type = "euclidean",clust_type = "hierarchical",linkage_type = "single",optimal_clust_mode = "standard",n_bins_clust = 40)
 
 names(test_aa) == names(test_bb)
@@ -210,10 +248,7 @@ if("test" %in% c("test","toast")){
   print("yes")
 }
 
-out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "hierarchical",linkage_type = "complete",optimal_clust_mode =  "standard",n_bins_clust = 10)
-plot_mapper(out_one_D,trans_node_size = FALSE)
 
-out_one_D <- one_D_Mapper(Ds_for_an,filter_function,n_int = 10,p = 0.3,distance_type = "cor",clust_type = "PAM",linkage_type = "complete",optimal_clust_mode =  "standard",n_bins_clust = 10)
 warnings()
 
 out_one_D$clust_all_levels
