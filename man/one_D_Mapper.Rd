@@ -10,6 +10,8 @@ one_D_Mapper(
   n_int = 10,
   p = 0.3,
   distance_type = "cor",
+  clust_type = "hierarchical",
+  linkage_type = "single",
   optimal_clust_mode = "standard",
   n_bins_clust = 10
 )

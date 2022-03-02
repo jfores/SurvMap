@@ -7,8 +7,10 @@
 clust_all_levels(
   Dis_Est_Mod,
   samp_in_lev,
-  distance_type = c("cor", "euclidean"),
-  optimal_clust_mode = c("standard", "silhouette"),
+  distance_type = "cor",
+  clust_type = "hierarchical",
+  linkage_type = "single",
+  optimal_clust_mode = "standard",
   n_bins_clust = 10
 )
 }

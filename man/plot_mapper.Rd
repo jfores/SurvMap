@@ -4,10 +4,12 @@
 \alias{plot_mapper}
 \title{plot_mapper}
 \usage{
-plot_mapper(mapper_list)
+plot_mapper(mapper_list, trans_node_size = TRUE, exp_to_res = 1/2)
 }
 \arguments{
 \item{mapper_list}{A list produced as an output of the one_D_Mapper function.}
+
+\item{exp_to_res}{An exponent in the form 1/n to wich the node sizes have to be exponentiatent in order to resize them.}
 }
 \value{
 Plots an interactive network using the visNetwork function.
