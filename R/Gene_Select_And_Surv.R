@@ -67,3 +67,41 @@ get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
   return(genes_asso_surv)
 
 }
+
+
+#' surivival_analysis_multiple_groups
+#'
+#' Survival analysis and plotting of the clustering results. https://www.reneshbedre.com/blog/survival-analysis.html
+#'
+#' @param pheno_data data.frame with phenotype data. Must include a columns called pCh_DFS_E, pCh_DFS_T, and pCh_Status including the event, time to relapse, and the status of the sample T: Disease NT: healthy
+#' @param out_one_D Mapper output.
+#' @param thr_groups Minimum number of samples to include a node in the analysis.
+#' @param ylim_val y-axis limits for survival plot.
+#' @param xlim_val x-axis limits for survival plot.
+#' @param type Divide by node or by pam50 in the latter case a column pam50_frma containing the pam50 classification will be requested.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' surivival_analysis_multiple_groups(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node")
+#' }
+surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node"){
+  univoq_group <- out_one_D$Unique_Samp_Node
+  p_merged <- merge(pheno_data,univoq_group,by.x = 1,by.y = 1 )
+  p_merged <- p_merged[p_merged$pCh_Status == "T",]
+  p_merged <- p_merged[!(is.na(p_merged$pCh_DFS_E) | is.na(p_merged$pCh_DFS_T)),]
+  selected_nodes <- names(table(p_merged$unique_cluster) > 20)[table(p_merged$unique_cluster) > thr_groups]
+  p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
+  surv = Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
+  if(type == "node"){
+    fit <- survfit(formula = surv ~ unique_cluster, data = p_merged)
+    log_rank_test <- survdiff(formula = surv ~ unique_cluster, data = p_merged)
+  }else if(type == "pam"){
+    fit <- survfit(formula = surv ~ pam50_frma, data = p_merged)
+    log_rank_test <- survdiff(formula = surv ~ pam50_frma, data = p_merged)
+  }
+  plot_out <- ggsurvplot(fit = fit, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val)
+  return(list(fit,p_merged,surv,plot_out,log_rank_test))
+}
