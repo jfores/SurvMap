@@ -19,6 +19,7 @@ Imports:
     grDevices,
     stats,
     survival,
+    survminer,
     utils,
     visNetwork
 Suggests: 

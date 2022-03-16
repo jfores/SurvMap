@@ -96,12 +96,12 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
   surv = Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
   if(type == "node"){
-    fit <- survfit(formula = surv ~ unique_cluster, data = p_merged)
-    log_rank_test <- survdiff(formula = surv ~ unique_cluster, data = p_merged)
+    fit <- survival::survfit(formula = surv ~ unique_cluster, data = p_merged)
+    log_rank_test <- survival::survdiff(formula = surv ~ unique_cluster, data = p_merged)
   }else if(type == "pam"){
-    fit <- survfit(formula = surv ~ pam50_frma, data = p_merged)
-    log_rank_test <- survdiff(formula = surv ~ pam50_frma, data = p_merged)
+    fit <- survival::survfit(formula = surv ~ pam50_frma, data = p_merged)
+    log_rank_test <- survival::survdiff(formula = surv ~ pam50_frma, data = p_merged)
   }
-  plot_out <- ggsurvplot(fit = fit, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val)
+  plot_out <- survminer::ggsurvplot(fit = fit, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val)
   return(list(fit,p_merged,surv,plot_out,log_rank_test))
 }
