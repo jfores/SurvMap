@@ -94,7 +94,7 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged <- p_merged[!(is.na(p_merged$pCh_DFS_E) | is.na(p_merged$pCh_DFS_T)),]
   selected_nodes <- names(table(p_merged$unique_cluster) > 20)[table(p_merged$unique_cluster) > thr_groups]
   p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
-  surv = Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
+  surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
   if(type == "node"){
     fit <- survival::survfit(formula = surv ~ unique_cluster, data = p_merged)
     log_rank_test <- survival::survdiff(formula = surv ~ unique_cluster, data = p_merged)
