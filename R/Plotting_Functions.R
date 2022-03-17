@@ -49,3 +49,6 @@ plot_mapper <- function(mapper_list,trans_node_size = TRUE,exp_to_res = 1/2){
   base::colnames(edges_to_net) <- c("from","to")
   visNetwork::visNetwork(nodes_to_net,edges_to_net[!edges_to_net$from == edges_to_net$to,],)
 }
+
+
+
