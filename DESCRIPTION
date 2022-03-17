@@ -16,6 +16,7 @@ RoxygenNote: 7.1.2
 Imports: 
     base,
     cluster,
+    ggplot2,
     grDevices,
     GSALightning,
     stats,

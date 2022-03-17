@@ -51,4 +51,61 @@ plot_mapper <- function(mapper_list,trans_node_size = TRUE,exp_to_res = 1/2){
 }
 
 
+#' Function to get colors like in ggplot2
+#'
+#' @param n number of colors.
+#' @param h range.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' ggplotColours(n,h)}
+ggplotColours <- function(n = 6, h = c(0, 360) + 15){
+  if ((diff(h) %% 360) < 1) h[2] <- h[2] - 360/n
+  hcl(h = (seq(h[1], h[2], length = n)), c = 100, l = 65)
+}
+
+
+#' plot_genes_by_groups
+#'
+#' Generate plots of genes by groups.
+#'
+#' @param exp_data expression data.
+#' @param genes genes to be plotted
+#' @param out_perform_wil differential expression analysis results for multiple groups.
+#' @param out_dir output directory.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' plot_genes_by_groups(exp_data,genes,out_perform_wil)}
+plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
+  samp_in_nodes <- out_perform_wil[[2]]
+  for(i in 1:length(samp_in_nodes)){
+    a_set <- rep(names(samp_in_nodes)[i],length(samp_in_nodes[[i]]))
+    b_set <- samp_in_nodes[[i]]
+    df_temp <- data.frame(a_set,b_set)
+    list_out[[i]] <- df_temp
+  }
+  df_out <- do.call("rbind",list_out)
+  print(df_out)
+  group_data_ord <- unique(df_out[,1])[order(unique(df_out[,1]))]
+  group_colors <- ggplotColours(length(group_data_ord))
+  names(group_colors) <- group_data_ord
+  #print(group_colors)
+  exp_filt <- exp_data[,df_out[,2]]
+  list_plots <- list()
+  for(i in 1:length(genes)){
+    df_temp <- data.frame(exp_filt[genes[i],],df_out[,1])
+    colnames(df_temp) <- c("expression","group")
+    p <- ggplot2::ggplot(df_temp, aes(x=group, y=expression,color = group)) +
+      ggplot2::geom_violin() +  ggplot2::geom_boxplot(width=0.1, fill="white") + ggplot2::theme_classic() + ggplot2::ggtitle(paste("Gene: ",genes[i])) + scale_fill_manual(values=group_colors)
+    list_plots[[i]] <- p
+  }
+  return(list_plots)
+}
 
