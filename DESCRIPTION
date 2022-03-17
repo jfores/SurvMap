@@ -17,6 +17,7 @@ Imports:
     base,
     cluster,
     grDevices,
+    GSALightning,
     stats,
     survival,
     survminer,
