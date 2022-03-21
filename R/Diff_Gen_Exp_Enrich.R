@@ -34,3 +34,43 @@ perform_wilcoxon_each <- function(exp_data,pheno_data,surv_map_res,thr_groups = 
   names(list_samples_in_groups) <- unique_groups
   return(list(out_results,list_samples_in_groups))
 }
+
+
+#' aux_function_select_top_diff
+#'
+#' Axuliar function to select_top_diff_genes_groups
+#'
+#' @param x res_diff_exp object
+#' @param n_genes number of top genes.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' aux_function_select_top_diff(x,n_genes)
+#' }
+aux_function_select_top_diff <- function(x,n_genes){
+  return(c(rownames(x[order(x[,3]),])[1:n_genes],rownames(x[order(x[,4]),])[1:n_genes]))
+}
+
+#' select_top_diff_genes_groups
+#'
+#' Select top differentially expressed genes for each group.
+#'
+#' @param res_diff_exp res_diff_exp object.
+#' @param n_genes top differentially expressed genes.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' select_top_diff_genes_groups(res_diff_exp,n_genes)
+#' }
+select_top_diff_genes_groups <- function(res_diff_exp,n_genes){
+  selected_genes <- unique(unlist(lapply(rsults_diff[[1]],aux_function_select_top_diff,n_genes)))
+  return(selected_genes)
+}
+
+
+
