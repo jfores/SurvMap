@@ -102,7 +102,7 @@ plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
   for(i in 1:length(genes)){
     df_temp <- data.frame(exp_filt[genes[i],],df_out[,1])
     colnames(df_temp) <- c("expression","group")
-    p <- ggplot2::ggplot(df_temp, aes(x=group, y=expression,color = group)) +
+    p <- ggplot2::ggplot(df_temp, ggplot2::aes(x=group, y=expression,color = group)) +
       ggplot2::geom_violin() +  ggplot2::geom_boxplot(width=0.1, fill="white") + ggplot2::theme_classic() + ggplot2::ggtitle(paste("Gene: ",genes[i])) + scale_fill_manual(values=group_colors)
     list_plots[[i]] <- p
   }
