@@ -109,3 +109,72 @@ plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
   return(list_plots)
 }
 
+
+#' plot_heatmap_data
+#'
+#' @param out_wilc object returned by the differential gene expresson function.
+#' @param selected_genes top differentially expressed genes.
+#' @param exp_data gene expression matrix.
+#' @param row_text_size size of the row labels.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' plot_heatmap_data(out_wilc,selected_genes,exp_data,row_text_size = 10)}
+plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 10){
+
+  #Create samples in nodes data.
+
+  samp_in_nodes <- out_wilc[[2]]
+  for(i in 1:length(samp_in_nodes)){
+    a_set <- rep(names(samp_in_nodes)[i],length(samp_in_nodes[[i]]))
+    b_set <- samp_in_nodes[[i]]
+    df_temp <- data.frame(a_set,b_set)
+    list_out[[i]] <- df_temp
+  }
+  df_out <- do.call("rbind",list_out)
+
+
+  # Filter expression matrix.
+
+  exp_data_filt <- exp_data[,df_out[,2]]
+
+  # Getting group colors.
+
+  group_data_ord <- unique(df_out[,1])[order(unique(df_out[,1]))]
+  group_colors <- ggplotColours(length(group_data_ord))
+  names(group_colors) <- group_data_ord
+
+  # Create colour dataframe
+
+  df_colors <- data.frame(names(group_colors),group_colors)
+  colnames(df_colors) <- c("Nodes","colors")
+  df_merged <- merge(df_out,df_colors,by.x = 1,by.y = 1,all.x = TRUE)
+  print(head(df_merged))
+  ha_data <- df_merged[,3]
+  names(ha_data) <- df_merged[,1]
+
+  # Filter and rename expression matgrix.
+
+  exp_data_filt <- exp_data_filt[,df_merged[,2]]
+  colnames(exp_data_filt) <- df_merged[,1]
+
+  # Create ha object.
+
+  ha_data <- group_colors
+  ha = ComplexHeatmap::HeatmapAnnotation(bar = df_merged[,1], col = list(bar = group_colors))
+
+  # Create color ramp.
+
+  col_fun = circlize::colorRamp2(c(-4, 0, 4), c("red", "black", "green"))
+
+  # Draw the heatmap.
+
+  draw(ComplexHeatmap::Heatmap(t(scale(t(scale(exp_data_filt[selected_genes,])))),cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = F,row_names_gp = gpar(fontsize = row_text_size),column_names_gp = gpar(fontsize = 0)))
+}
+
+
+
+
