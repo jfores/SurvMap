@@ -68,7 +68,7 @@ aux_function_select_top_diff <- function(x,n_genes){
 #' select_top_diff_genes_groups(res_diff_exp,n_genes)
 #' }
 select_top_diff_genes_groups <- function(res_diff_exp,n_genes){
-  selected_genes <- unique(unlist(lapply(rsults_diff[[1]],aux_function_select_top_diff,n_genes)))
+  selected_genes <- unique(unlist(lapply(res_diff_exp[[1]],aux_function_select_top_diff,n_genes)))
   return(selected_genes)
 }
 
