@@ -71,7 +71,7 @@ get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
 
 #' surivival_analysis_multiple_groups
 #'
-#' Survival analysis and plotting of the clustering results. https://www.reneshbedre.com/blog/survival-analysis.html
+#' Survival analysis and plottding of the clustering results. https://www.reneshbedre.com/blog/survival-analysis.html
 #'
 #' @param pheno_data data.frame with phenotype data. Must include a columns called pCh_DFS_E, pCh_DFS_T, and pCh_Status including the event, time to relapse, and the status of the sample T: Disease NT: healthy
 #' @param out_one_D Mapper output.
@@ -106,7 +106,6 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$pam50_frma)
   }
   plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val)
-  print("HERE 2")
   p_merged_temp <- p_merged
   rm(list = "p_merged",envir = globalenv())
   return(list(fit,p_merged_temp,surv,plot_out,log_rank_test))
