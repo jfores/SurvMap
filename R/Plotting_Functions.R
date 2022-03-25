@@ -126,7 +126,7 @@ plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
 plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 10){
 
   #Create samples in nodes data.
-
+  list_out <- list()
   samp_in_nodes <- out_wilc[[2]]
   for(i in 1:length(samp_in_nodes)){
     a_set <- rep(names(samp_in_nodes)[i],length(samp_in_nodes[[i]]))
@@ -172,7 +172,7 @@ plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 1
 
   # Draw the heatmap.
 
-  draw(ComplexHeatmap::Heatmap(t(scale(t(scale(exp_data_filt[selected_genes,])))),cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = F,row_names_gp = gpar(fontsize = row_text_size),column_names_gp = gpar(fontsize = 0)))
+  ComplexHeatmap::draw(ComplexHeatmap::Heatmap(t(scale(t(scale(exp_data_filt[selected_genes,])))),cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = F,row_names_gp = gpar(fontsize = row_text_size),column_names_gp = gpar(fontsize = 0)))
 }
 
 
