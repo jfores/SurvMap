@@ -85,6 +85,7 @@ ggplotColours <- function(n = 6, h = c(0, 360) + 15){
 #' plot_genes_by_groups(exp_data,genes,out_perform_wil)}
 plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
   samp_in_nodes <- out_perform_wil[[2]]
+  list_out <- list()
   for(i in 1:length(samp_in_nodes)){
     a_set <- rep(names(samp_in_nodes)[i],length(samp_in_nodes[[i]]))
     b_set <- samp_in_nodes[[i]]
