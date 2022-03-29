@@ -79,6 +79,7 @@ get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
 #' @param ylim_val y-axis limits for survival plot.
 #' @param xlim_val x-axis limits for survival plot.
 #' @param type Divide by node or by pam50 in the latter case a column pam50_frma containing the pam50 classification will be requested.
+#' @param selected_nodes_2 subset of nodes to compare.
 #'
 #' @return
 #' @export
@@ -87,7 +88,7 @@ get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
 #' \dontrun{
 #' surivival_analysis_multiple_groups(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node")
 #' }
-surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node",selected_nodes = ""){
+surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node",selected_nodes_2 = ""){
   univoq_group <- out_one_D$Unique_Samp_Node
   p_merged <- merge(pheno_data,univoq_group,by.x = 1,by.y = 1 )
   p_merged <- p_merged[p_merged$pCh_Status == "T",]
@@ -96,10 +97,17 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
   p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
   p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
-  p_merged <<- p_merged
-  if(!selected_nodes == ""){
-    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
+  p_merged <- p_merged
+  group_data_ord <- unique(p_merged$unique_cluster)[order(unique(p_merged$unique_cluster))]
+  group_colors <- ggplotColours(length(group_data_ord))
+  names(group_colors) <- group_data_ord
+  print(group_colors)
+  if(!selected_nodes_2 == ""){
+    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes_2,]
+    group_colors <- group_colors[names(group_colors) %in% selected_nodes_2]
+    print(group_colors)
   }
+  p_merged <<- p_merged
   surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
   if(type == "node"){
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
@@ -108,7 +116,7 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$pam50_frma)
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$pam50_frma)
   }
-  plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val)
+  plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val,palette = unname(group_colors))
   p_merged_temp <- p_merged
   rm(list = "p_merged",envir = globalenv())
   return(list(fit,p_merged_temp,surv,plot_out,log_rank_test))
