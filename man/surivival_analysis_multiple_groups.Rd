@@ -10,7 +10,8 @@ surivival_analysis_multiple_groups(
   thr_groups = 50,
   ylim_val = c(0.5, 1),
   xlim_val = c(0, 200),
-  type = "node"
+  type = "node",
+  selected_nodes_2 = ""
 )
 }
 \arguments{
@@ -25,12 +26,14 @@ surivival_analysis_multiple_groups(
 \item{xlim_val}{x-axis limits for survival plot.}
 
 \item{type}{Divide by node or by pam50 in the latter case a column pam50_frma containing the pam50 classification will be requested.}
+
+\item{selected_nodes_2}{subset of nodes to compare.}
 }
 \value{
 
 }
 \description{
-Survival analysis and plotting of the clustering results. https://www.reneshbedre.com/blog/survival-analysis.html
+Survival analysis and plottding of the clustering results. https://www.reneshbedre.com/blog/survival-analysis.html
 }
 \examples{
 \dontrun{
