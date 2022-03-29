@@ -87,7 +87,7 @@ get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
 #' \dontrun{
 #' surivival_analysis_multiple_groups(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node")
 #' }
-surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node"){
+surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node",selected_nodes = ""){
   univoq_group <- out_one_D$Unique_Samp_Node
   p_merged <- merge(pheno_data,univoq_group,by.x = 1,by.y = 1 )
   p_merged <- p_merged[p_merged$pCh_Status == "T",]
@@ -97,6 +97,9 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
   p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
   p_merged <<- p_merged
+  if(selected_nodes != ""){
+    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
+  }
   surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
   if(type == "node"){
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
