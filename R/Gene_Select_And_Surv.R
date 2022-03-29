@@ -102,7 +102,7 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   group_colors <- ggplotColours(length(group_data_ord))
   names(group_colors) <- group_data_ord
   print(group_colors)
-  if(!selected_nodes_2 == ""){
+  if(! c("") %in%selected_nodes_2){
     p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes_2,]
     group_colors <- group_colors[names(group_colors) %in% selected_nodes_2]
     print(group_colors)
