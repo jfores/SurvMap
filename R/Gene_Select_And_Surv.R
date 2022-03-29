@@ -97,7 +97,7 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
   p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
   p_merged <<- p_merged
-  if(selected_nodes != ""){
+  if(!selected_nodes == ""){
     p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
   }
   surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
