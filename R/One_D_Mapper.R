@@ -291,7 +291,6 @@ compute_node_adjacency <- function(nodes_list){
 }
 
 
-
 #' one_D_Mapper
 #'
 #' Wrapping function to carry out the complete process.
