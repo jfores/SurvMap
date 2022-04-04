@@ -89,7 +89,7 @@ clust_lev <- function(dis_est_mod_lev,distance_type = "cor",clust_type = "hierar
     breaks_for_bins <- base::seq(from=min(heights), to=max_dist_lev, by=(max_dist_lev - base::min(heights))/n_bins_clust)
     #print(breaks_for_bins)
     histogram <- graphics::hist(c(heights,max_dist_lev), breaks=breaks_for_bins, plot=FALSE)
-    plot(histogram)
+    #plot(histogram)
     #plot(histogram)
     hist_gap <- (histogram$counts == 0)
     if(all(!hist_gap)){
