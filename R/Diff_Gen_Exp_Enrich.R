@@ -73,4 +73,86 @@ select_top_diff_genes_groups <- function(res_diff_exp,n_genes){
 }
 
 
+#' prepare_diff_meth_res
+#'
+#' Prepares differential methylation analysis results, and retrieves the top n probes presenting highest up- and -down differential methylation
+#'
+#' @param res_diff output object from perform_wilcoxon_each function.
+#' @param gen_inf Information about the genes associated to each methylation probe obtained after applying the rewRanges function to a summarized experiment object
+#' @param n_genes Number of top methylated genes to retrieve for each Node.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' @examples
+#' prepare_diff_meth_res(res_diff,gen_inf,n_genes)
+#' }
+prepare_diff_meth_res <- function(res_diff,gen_inf,n_genes){
+  res_diff_one <- res_diff[[1]]
+  res_diff_one_merged <- lapply(res_diff_one,merge,gen_inf,by.x = "row.names",by.y = "probeID" )
+  out_res_top <- lapply(res_diff_one_merged,fun_to_app_prep,n_genes)
+  return(out_res_top)
+}
+
+
+#' fun_to_app_prep
+#'
+#' Auxiliar function for prepare_diff_meth_res
+#'
+#' @param x A dataframe
+#' @param n_genes Number of genes showing the highest differences in methylation.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' @examples
+#' fun_to_app_prep(x,n_genes)
+#' }
+fun_to_app_prep <- function(x,n_genes){
+
+  x_up <- x[order(x[,4],decreasing = F),]
+  x_up <- x_up[!x_up[,11] == "",]
+  row_temp <- 1
+  list_genes_temp <- c()
+  list_selected_rows <- c()
+  keep_searching <- TRUE
+  while(keep_searching){
+    print(row_temp)
+    if(!x_up[row_temp,11] %in% list_genes_temp){
+      list_selected_rows <- c(list_selected_rows,row_temp)
+      list_genes_temp <- c(list_genes_temp,x_up[row_temp,11])
+    }
+    row_temp <- row_temp + 1
+    if(length(list_genes_temp) >= n_genes){
+      keep_searching <- FALSE
+    }
+  }
+  print(list_genes_temp)
+  x_up <- x_up[list_selected_rows,]
+
+  x_down <- x[order(x[,5],decreasing = F),]
+  x_down <- x_down[!x_down[,11] == "",]
+  row_temp <- 1
+  list_genes_temp <- c()
+  list_selected_rows <- c()
+  keep_searching <- TRUE
+  while(keep_searching){
+    print(row_temp)
+    if(!x_down[row_temp,11] %in% list_genes_temp){
+      list_selected_rows <- c(list_selected_rows,row_temp)
+      list_genes_temp <- c(list_genes_temp,x_down[row_temp,11])
+    }
+    row_temp <- row_temp + 1
+    if(length(list_genes_temp) >= n_genes){
+      keep_searching <- FALSE
+    }
+  }
+  x_down <- x_down[list_selected_rows,]
+  print(list_genes_temp)
+  return(rbind(x_up,x_down))
+}
+
+
 

@@ -173,7 +173,7 @@ plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 1
 
   # Draw the heatmap.
 
-  ComplexHeatmap::draw(ComplexHeatmap::Heatmap(t(scale(t(scale(exp_data_filt[selected_genes,])))),cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = F,row_names_gp = gpar(fontsize = row_text_size),column_names_gp = gpar(fontsize = 0)))
+  ComplexHeatmap::draw(ComplexHeatmap::Heatmap(t(scale(t(scale(exp_data_filt[selected_genes,])))),cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = F,row_names_gp = grid::gpar(fontsize = row_text_size),column_names_gp = grid::gpar(fontsize = 0)))
 }
 
 
