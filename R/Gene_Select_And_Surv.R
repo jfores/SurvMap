@@ -53,7 +53,7 @@ gene_selection_surv <- function(D_Comp,p_Data,Status_Col_Name,Status_Value,Cox_A
   }else if(type_sel == "Abs"){
     print("Is Abs")
     probes_test <- (apply(D_Comp[,p_Data[,Status_Col_Name] == Status_Value],1,sd)+1) * abs(Cox_All[,4])
-    selected_probes <- names(probes_test[order(probes_test,decreasing = F)][1:n_top])
+    selected_probes <- names(probes_test[order(probes_test,decreasing = T)])[1:n_top]
     return(selected_probes)
   }
 }
