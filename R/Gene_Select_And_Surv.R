@@ -18,6 +18,47 @@ gene_selection <- function(disease_component_tumors,percent = 0.85){
 
 
 
+#' gene_selection_surv
+#'
+#' Selects markers for mapper based on the product of standard deviation plus one times the Z score obtained thorugh fitting a cox proportional hazard model to the expression of each gene.
+#'
+#' @param D_Comp Disease component object
+#' @param p_Data Data.frame with the phenotype data.
+#' @param Status_Col_Name Column for sample filtering.
+#' @param Status_Value Value for the sample filtering co-variate.
+#' @param Cox_All Output from the cox_all_genes function.
+#' @param n_top Number of markers presenting the maximum values for the product.
+#' @param type_sel Select top from bottom and top or from absolute value.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' gene_selection_surv(D_Comp,p_Data,Status_Col_Name,Status_Value,Cox_All,n_top)
+#' }
+gene_selection_surv <- function(D_Comp,p_Data,Status_Col_Name,Status_Value,Cox_All,n_top,type_sel = c("Top_Bot","Abs")){
+  if(type_sel == "Top_Bot"){
+    print("Is Top_Bot")
+    probes_test <- (apply(D_Comp[,p_Data[,Status_Col_Name] == Status_Value],1,sd)+1) * Cox_All[,4]
+    if(n_top %% 2 == 0){
+      n_top <- n_top / 2
+      print(n_top)
+    }else{
+      n_top <- (n_top + 1)/2
+      print(n_top)
+    }
+    selected_probes <- names(c(probes_test[order(probes_test,decreasing = T)][1:n_top],probes_test[order(probes_test,decreasing = F)][1:n_top]))
+    return(selected_probes)
+  }else if(type_sel == "Abs"){
+    print("Is Abs")
+    probes_test <- (apply(D_Comp[,p_Data[,Status_Col_Name] == Status_Value],1,sd)+1) * abs(Cox_All[,4])
+    selected_probes <- names(probes_test[order(probes_test,decreasing = F)][1:n_top])
+    return(selected_probes)
+  }
+}
+
+
 #' Survival analysis based on gene expression levels.
 #'
 #' Carries out univariate cox protportional hazard models for the expression levels of each gene included in the dataset and its link with relapse-free or overall survival.
