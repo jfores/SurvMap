@@ -38,6 +38,7 @@ gene_selection <- function(disease_component_tumors,percent = 0.85){
 #' gene_selection_surv(D_Comp,p_Data,Status_Col_Name,Status_Value,Cox_All,n_top)
 #' }
 gene_selection_surv <- function(D_Comp,p_Data,Status_Col_Name,Status_Value,Cox_All,n_top,type_sel = c("Top_Bot","Abs")){
+  Cox_All <- Cox_All[rownames(D_Comp),]
   if(type_sel == "Top_Bot"){
     print("Is Top_Bot")
     probes_test <- (apply(D_Comp[,p_Data[,Status_Col_Name] == Status_Value],1,sd)+1) * Cox_All[,4]
