@@ -131,3 +131,26 @@ create_output_df_unique_node <- function(out_one_D,exp_filt){
   return(final_out)
 }
 
+
+
+#' percen_table
+#'
+#' Computes percentages of categorical variables in groups of samples.
+#'
+#' @param vec_1 vector of groups
+#' @param vec_2 vector of categorical variables.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' create_output_df_unique_node(out_one_D,exp_filt)
+#' }
+percent_table <- function(vec_1,vec_2){
+  table_vals <- table(vec_1,vec_2)
+  print(table_vals)
+  col_summed <- colSums(table_vals)
+  print(col_summed)
+  return(t(t(table_vals)/col_summed*100))
+}
