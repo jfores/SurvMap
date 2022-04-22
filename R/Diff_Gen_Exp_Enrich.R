@@ -85,7 +85,6 @@ select_top_diff_genes_groups <- function(res_diff_exp,n_genes){
 #' @export
 #'
 #' @examples
-#' @examples
 #' prepare_diff_meth_res(res_diff,gen_inf,n_genes)
 #' }
 prepare_diff_meth_res <- function(res_diff,gen_inf,n_genes){
@@ -106,7 +105,6 @@ prepare_diff_meth_res <- function(res_diff,gen_inf,n_genes){
 #' @return
 #' @export
 #'
-#' @examples
 #' @examples
 #' fun_to_app_prep(x,n_genes)
 #' }
@@ -155,4 +153,60 @@ fun_to_app_prep <- function(x,n_genes){
 }
 
 
+#' perform_GSVA_dataset
+#'
+#' Carries out GSVA for the complete dataset and camputes the averange values by pathways and group of samples.
+#'
+#' @param expression Gene expression matrix.
+#' @param surv_Map_Out Output from SurvMap analyses.
+#' @param path_to_gmt_file Pathway to the gtm file containing the pathways atabase.
+#' @param thr_groups threshold of the number of samples used to filter out small nodes.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' perform_GSVA_dataset(expression,surv_Map_Out,path_to_gmt_file,thr_groups = 20)
+#' }
+perform_GSVA_dataset <- function(expression,surv_Map_Out,path_to_gmt_file,thr_groups = 20){
 
+  gene_sets_data <- GSA::GSA.read.gmt(path_to_gmt_file)
+  gene_sets <- gene_sets_data$genesets
+  names(gene_sets) <- gene_sets_data$geneset.names
+
+  uniq_samp <- surv_Map_Out$Unique_Samp_Node
+  rownames(uniq_samp) <- uniq_samp[,1]
+
+  gsva_res <- GSVA::gsva(expression, gene_sets, min.sz=5, max.sz=500)
+  print(dim(gsva_res))
+  intersected_samples <- intersect(uniq_samp[,1],colnames(gsva_res))
+  gsva_res <- gsva_res[,intersected_samples]
+  uniq_samp <- uniq_samp[intersected_samples,]
+
+  selected_nodes <- names(table(uniq_samp[,2]) > thr_groups)[table(uniq_samp[,2]) > thr_groups]
+  uniq_samp <- uniq_samp[uniq_samp[,2] %in% selected_nodes,]
+  print(table(uniq_samp[,2]))
+
+  gsva_res <- gsva_res[,rownames(uniq_samp)]
+
+  averaged_data <- t(apply(gsva_res,1,axuiliar_function_to_mean,y = uniq_samp[,2]))
+  list_out <- list(gsva_res,averaged_data)
+  return(list_out)
+}
+
+#' axuiliar_function_to_mean
+#'
+#' Auxiliar function that computes the mean of a vector based on a group.
+#'
+#' @param x vector of numeric values.
+#' @param y vector indicating the group to which each numeric value belong.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' axuiliar_function_to_mean(x,y)
+#' }
+axuiliar_function_to_mean <- function(x,y){
+  return(tapply(x,y,mean))
+}
