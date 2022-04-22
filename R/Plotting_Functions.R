@@ -178,4 +178,27 @@ plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 1
 
 
 
+#' plot_GSVA
+#'
+#' Plots results from GSVA analyses.
+#'
+#' @param GSVA_res list containing the output from the perform_GSVA_dataset function.
+#' @param row_text_size size of the row labels.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+plot_GSVA <- function(GSVA_res,row_text_size = 10){
+  GSVA_res <- GSVA_res[[2]]
+  group_data_ord <- colnames(GSVA_res)[order(colnames(GSVA_res))]
+  group_colors <- ggplotColours(length(group_data_ord))
+  names(group_colors) <- group_data_ord
+  print(group_data_ord)
+  print(group_colors)
+  ha = ComplexHeatmap::HeatmapAnnotation(Paths =colnames(GSVA_res), col = list(Paths = group_colors))
+  col_fun = circlize::colorRamp2(c(min(GSVA_res), 0, max(GSVA_res)), c("red", "black", "green"))
+  ComplexHeatmap::draw(ComplexHeatmap::Heatmap(GSVA_res,cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = T,row_names_gp = grid::gpar(fontsize = row_text_size),column_names_gp = grid::gpar(fontsize = 0)))
+}
+
 
