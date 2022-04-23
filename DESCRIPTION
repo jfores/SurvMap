@@ -28,7 +28,8 @@ Imports:
     survival,
     survminer,
     utils,
-    visNetwork
+    visNetwork,
+    WGCNA
 Suggests: 
     rmarkdown,
     knitr,
