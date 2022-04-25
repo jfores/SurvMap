@@ -21,5 +21,6 @@ Plots the mean connectivity values for the different tested powers.
 }
 \examples{
 \dontrun{
-plot_mean_connectivity(pwer_table,name_ds,cex_val = 0.7)}
+plot_mean_connectivity(pwer_table,name_ds,cex_val = 0.7)
+}
 }

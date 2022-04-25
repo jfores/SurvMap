@@ -25,5 +25,6 @@ plots scale-free topology fit or mean connectivity against power for multiple da
 }
 \examples{
 \dontrun{
-plot_multiple_graphs(power_tables,type = c("fit","connectivity"),file_to_save)}
+plot_multiple_graphs(power_tables,type = c("fit","connectivity"),file_to_save)
+}
 }

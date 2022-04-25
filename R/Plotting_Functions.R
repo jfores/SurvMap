@@ -189,6 +189,8 @@ plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 1
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' plot_GSVA(GSVA_res,row_text_size = 10)}
 plot_GSVA <- function(GSVA_res,row_text_size = 10){
   GSVA_res <- GSVA_res[[2]]
   group_data_ord <- colnames(GSVA_res)[order(colnames(GSVA_res))]

@@ -17,3 +17,8 @@ select_top_diff_genes_groups(res_diff_exp, n_genes)
 \description{
 Select top differentially expressed genes for each group.
 }
+\examples{
+\dontrun{
+select_top_diff_genes_groups(res_diff_exp,n_genes)
+}
+}

@@ -17,5 +17,6 @@ Compute power tables for each dataset.
 }
 \examples{
 \dontrun{
-compute_power_tables(dis_st_mod,filt_vector,n_int,p)}
+compute_power_tables(dis_st_mod,filt_vector,n_int,p)
+}
 }

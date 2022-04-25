@@ -17,3 +17,8 @@ axuiliar_function_to_mean(x, y)
 \description{
 Auxiliar function that computes the mean of a vector based on a group.
 }
+\examples{
+\dontrun{
+axuiliar_function_to_mean(x,y)
+}
+}

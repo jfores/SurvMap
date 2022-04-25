@@ -17,5 +17,6 @@ auxiliar function for the select powers function.
 }
 \examples{
 \dontrun{
-select_powers_aux(pow_tab)}
+select_powers_aux(pow_tab)
+}
 }

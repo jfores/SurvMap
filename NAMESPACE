@@ -2,6 +2,7 @@
 
 export(aux_function_select_top_diff)
 export(axuiliar_function_to_mean)
+export(block_wise_mod)
 export(clust_all_levels)
 export(clust_lev)
 export(compute_node_adjacency)

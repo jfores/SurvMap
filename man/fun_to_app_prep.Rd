@@ -17,3 +17,8 @@ fun_to_app_prep(x, n_genes)
 \description{
 Auxiliar function for prepare_diff_meth_res
 }
+\examples{
+\dontrun{
+fun_to_app_prep(x,n_genes)
+}
+}

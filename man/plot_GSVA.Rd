@@ -17,3 +17,7 @@ plot_GSVA(GSVA_res, row_text_size = 10)
 \description{
 Plots results from GSVA analyses.
 }
+\examples{
+\dontrun{
+plot_GSVA(GSVA_res,row_text_size = 10)}
+}

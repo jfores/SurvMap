@@ -17,5 +17,6 @@ Select powers that produce the best scale-free topology fit.
 }
 \examples{
 \dontrun{
-select_powers(power_tables)}
+select_powers(power_tables)
+}
 }

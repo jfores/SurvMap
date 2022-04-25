@@ -21,5 +21,6 @@ Plots the scale-free topology fit for the different tested powers.
 }
 \examples{
 \dontrun{
-plot_scale_free_fit(pwer_table,name_ds,cex_val = 0.7)}
+plot_scale_free_fit(pwer_table,name_ds,cex_val = 0.7)
+}
 }

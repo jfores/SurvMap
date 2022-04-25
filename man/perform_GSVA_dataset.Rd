@@ -26,3 +26,8 @@ perform_GSVA_dataset(
 \description{
 Carries out GSVA for the complete dataset and camputes the averange values by pathways and group of samples.
 }
+\examples{
+\dontrun{
+perform_GSVA_dataset(expression,surv_Map_Out,path_to_gmt_file,thr_groups = 20)
+}
+}

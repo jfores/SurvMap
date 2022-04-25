@@ -9,7 +9,8 @@
 #'
 #' @examples
 #' \dontrun{
-#' compute_power_tables(dis_st_mod,filt_vector,n_int,p)}
+#' compute_power_tables(dis_st_mod,filt_vector,n_int,p)
+#' }
 compute_power_tables <- function(list_datasets){
   powers = c(seq(2, 20, by=1))
   powerTables = vector(mode = "list", length = length(test_splitted))
@@ -33,7 +34,8 @@ compute_power_tables <- function(list_datasets){
 #'
 #' @examples
 #' \dontrun{
-#' plot_scale_free_fit(pwer_table,name_ds,cex_val = 0.7)}
+#' plot_scale_free_fit(pwer_table,name_ds,cex_val = 0.7)
+#' }
 plot_scale_free_fit <- function(pwer_table,name_ds,cex_val = 0.7){
   plot(pwer_table$data[,1],-sign(pwer_table$data[,3])*pwer_table$data[,2],xlab="Soft Threshold (power)",ylab="Scale Free Topology Model Fit,signed R^2",type = "n",ylim = c(0,1),main = paste("Scale independence in ", name_ds),cex.main = 0.7,cex.lab = 0.7)
   text(pwer_table$data[,1],-sign(pwer_table$data[,3])*pwer_table$data[,2],labels=pwer_table$data[,1],col="red",cex = cex_val)
@@ -53,7 +55,8 @@ plot_scale_free_fit <- function(pwer_table,name_ds,cex_val = 0.7){
 #'
 #' @examples
 #' \dontrun{
-#' plot_mean_connectivity(pwer_table,name_ds,cex_val = 0.7)}
+#' plot_mean_connectivity(pwer_table,name_ds,cex_val = 0.7)
+#' }
 plot_mean_connectivity <- function(pwer_table,name_ds,cex_val = 0.7){
   plot(pwer_table$data[,1],pwer_table$data[,5],xlab="Soft Threshold (power)",ylab="Mean Connectivity",type = "n",ylim = c(0,max(pwer_table$data[,5])),main = paste("Mean connectivity in", name_ds),cex.main = 0.7,cex.lab = 0.7)
   text(pwer_table$data[,1],pwer_table$data[,5],labels=pwer_table$data[,1],col="red")
@@ -73,7 +76,8 @@ plot_mean_connectivity <- function(pwer_table,name_ds,cex_val = 0.7){
 #'
 #' @examples
 #' \dontrun{
-#' plot_multiple_graphs(power_tables,type = c("fit","connectivity"),file_to_save)}
+#' plot_multiple_graphs(power_tables,type = c("fit","connectivity"),file_to_save)
+#' }
 plot_multiple_graphs <- function(power_tables,type = c("fit","connectivity"),file_to_save){
   sizeGrWindow(20,20)
   pdf(file =file_to_save,width = 12,height = 12)
@@ -104,7 +108,8 @@ plot_multiple_graphs <- function(power_tables,type = c("fit","connectivity"),fil
 #'
 #' @examples
 #' \dontrun{
-#' select_powers_aux(pow_tab)}
+#' select_powers_aux(pow_tab)
+#' }
 select_powers_aux <- function(pow_tab){
   selected_power <- pow_tab$data[-sign(pow_tab$data[,3])*pow_tab$data[,2] > 0.9,][1,1]
   if(is.na(selected_power)){
@@ -124,9 +129,33 @@ select_powers_aux <- function(pow_tab){
 #'
 #' @examples
 #' \dontrun{
-#' select_powers(power_tables)}
+#' select_powers(power_tables)
+#' }
 select_powers <- function(power_tables){
   powers <- unlist(lapply(power_tables,select_powers_aux))
   return(powers)
 }
 
+#' block_wise_mod
+#'
+#' Computes blockwiseConsensusModules
+#'
+#' @param list_exp list containing gene expressoin datasets.
+#' @param powers power derived from the scale-free topology fit analysis.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' block_wise_mod(list_exp, powers)
+#' }
+block_wise_mod <- function(list_exp, powers){
+  WGCNA::allowWGCNAThreads()
+  multiExpr = list()
+  for( i in 1:length(list_exp)){
+    multiExpr[[i]]<- list(data = list_exp[[i]])
+  }
+  mods <- WGCNA::blockwiseConsensusModules(multiExpr, maxBlockSize = 30000, corType = "bicor", power = powers, networkType = "signed hybrid", TOMDenom = "mean", checkMissingData = FALSE, deepSplit = 3, reassignThresholdPS = 0, pamRespectsDendro = FALSE, mergeCutHeight = 0.25, numericLabels = TRUE, getTOMScalingSamples = TRUE, consensusQuantile = 0.25, verbose = 3, indent = 2)
+  return(mods)
+}

@@ -65,6 +65,7 @@ aux_function_select_top_diff <- function(x,n_genes){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' select_top_diff_genes_groups(res_diff_exp,n_genes)
 #' }
 select_top_diff_genes_groups <- function(res_diff_exp,n_genes){
@@ -85,6 +86,7 @@ select_top_diff_genes_groups <- function(res_diff_exp,n_genes){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' prepare_diff_meth_res(res_diff,gen_inf,n_genes)
 #' }
 prepare_diff_meth_res <- function(res_diff,gen_inf,n_genes){
@@ -106,6 +108,7 @@ prepare_diff_meth_res <- function(res_diff,gen_inf,n_genes){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' fun_to_app_prep(x,n_genes)
 #' }
 fun_to_app_prep <- function(x,n_genes){
@@ -166,6 +169,7 @@ fun_to_app_prep <- function(x,n_genes){
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' perform_GSVA_dataset(expression,surv_Map_Out,path_to_gmt_file,thr_groups = 20)
 #' }
 perform_GSVA_dataset <- function(expression,surv_Map_Out,path_to_gmt_file,thr_groups = 20){
@@ -205,6 +209,7 @@ perform_GSVA_dataset <- function(expression,surv_Map_Out,path_to_gmt_file,thr_gr
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' axuiliar_function_to_mean(x,y)
 #' }
 axuiliar_function_to_mean <- function(x,y){

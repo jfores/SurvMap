@@ -19,3 +19,8 @@ prepare_diff_meth_res(res_diff, gen_inf, n_genes)
 \description{
 Prepares differential methylation analysis results, and retrieves the top n probes presenting highest up- and -down differential methylation
 }
+\examples{
+\dontrun{
+prepare_diff_meth_res(res_diff,gen_inf,n_genes)
+}
+}
