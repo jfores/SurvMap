@@ -159,3 +159,32 @@ block_wise_mod <- function(list_exp, powers){
   mods <- WGCNA::blockwiseConsensusModules(multiExpr, maxBlockSize = 30000, corType = "bicor", power = powers, networkType = "signed hybrid", TOMDenom = "mean", checkMissingData = FALSE, deepSplit = 3, reassignThresholdPS = 0, pamRespectsDendro = FALSE, mergeCutHeight = 0.25, numericLabels = TRUE, getTOMScalingSamples = TRUE, consensusQuantile = 0.25, verbose = 3, indent = 2)
   return(mods)
 }
+
+#' meta_norm_nobs
+#'
+#' @param list_z_scores list of z_scores.
+#' @param list_nobs list of number of observations.
+#' @param column column
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' meta_norm_nobs(list_z_scores,list_nobs,column)
+#' }
+meta_norm_nobs <- function(list_z_scores,list_nobs,column){
+  reduced_data <- Reduce("cbind",lapply(list_z_scores, function(x) x[,column]))
+  reduced_data_nobs <- Reduce("cbind",lapply(list_nobs, function(x) x[,column]))
+  bool_filt <- !(colSums(is.na(reduced_data)) > 0)
+  reduced_data <- reduced_data[,bool_filt]
+  reduced_data_nobs <- reduced_data_nobs[,bool_filt]
+  reduced_data_nobs <- unname(reduced_data_nobs[1,])
+  weight_st <- sqrt(reduced_data_nobs)
+  number_of_studies <- ncol(reduced_data)
+  z_comb_num <- rowSums(t(t(reduced_data) * weight_st))
+  z_comb_den <- sqrt(sum(weight_st^2 ))
+  z_comb <- z_comb_num / z_comb_den
+  p_comb <- 2*pnorm(abs(z_comb), lower.tail = FALSE)
+  return(list(z_comb,p_comb))
+}
