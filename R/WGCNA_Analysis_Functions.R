@@ -72,6 +72,8 @@ plot_mean_connectivity <- function(pwer_table,name_ds,cex_val = 0.7){
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' plot_multiple_graphs(power_tables,type = c("fit","connectivity"),file_to_save)}
 plot_multiple_graphs <- function(power_tables,type = c("fit","connectivity"),file_to_save){
   sizeGrWindow(20,20)
   pdf(file =file_to_save,width = 12,height = 12)
@@ -90,3 +92,41 @@ plot_multiple_graphs <- function(power_tables,type = c("fit","connectivity"),fil
   }
   dev.off()
 }
+
+#' select_powers_aux
+#'
+#' auxiliar function for the select powers function.
+#'
+#' @param pow_tab power table
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' select_powers_aux(pow_tab)}
+select_powers_aux <- function(pow_tab){
+  selected_power <- pow_tab$data[-sign(pow_tab$data[,3])*pow_tab$data[,2] > 0.9,][1,1]
+  if(is.na(selected_power)){
+    selected_power <-  pow_tab$data[which.max(-sign(pow_tab$data[,3])*pow_tab$data[,2]),1]
+  }
+  return(selected_power)
+}
+
+#' select_powers
+#'
+#' Select powers that produce the best scale-free topology fit.
+#'
+#' @param power_tables power tables list produced by the compute_power_tables function.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' select_powers(power_tables)}
+select_powers <- function(power_tables){
+  powers <- unlist(lapply(power_tables,select_powers_aux))
+  return(powers)
+}
+

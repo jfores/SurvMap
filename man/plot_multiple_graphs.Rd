@@ -23,3 +23,7 @@ plot_multiple_graphs(
 \description{
 plots scale-free topology fit or mean connectivity against power for multiple datasets using the output from the compute_power_tables function.
 }
+\examples{
+\dontrun{
+plot_multiple_graphs(power_tables,type = c("fit","connectivity"),file_to_save)}
+}
