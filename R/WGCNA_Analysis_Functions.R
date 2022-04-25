@@ -240,3 +240,22 @@ create_data_frame_from_multi <- function(vec_to_trans,row_names){
   rownames(df_data) <- row_names
   return(df_data)
 }
+
+#' create_multi_expressoin_object
+#'
+#' @param test_splitted test_splitted
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' create_multi_expressoin_object(test_splitted)
+#' }
+create_multi_expressoin_object <- function(test_splitted){
+  multiExpr = list()
+  for( i in 1:length(test_splitted)){
+    multiExpr[[i]]<- list(data = test_splitted[[i]])
+  }
+  return(multiExpr)
+}
