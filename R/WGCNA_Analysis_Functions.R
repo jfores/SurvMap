@@ -188,3 +188,32 @@ meta_norm_nobs <- function(list_z_scores,list_nobs,column){
   p_comb <- 2*pnorm(abs(z_comb), lower.tail = FALSE)
   return(list(z_comb,p_comb))
 }
+
+#' prepare_data_stouffer_p_val
+#'
+#' @param p_Data_split p_Data_split
+#' @param ME_sig_Z ME_sig_Z
+#' @param ME_sig_Nobs ME_sig_Nobs
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' prepare_data_stouffer_p_val(p_Data_split,ME_sig_Z,ME_sig_Nobs)
+#' }
+prepare_data_stouffer_p_val <- function(p_Data_split,ME_sig_Z,ME_sig_Nobs){
+  list_z <- list()
+  list_pval <- list()
+  for(i in 1:(ncol(p_Data_split[[1]]))){
+    print(i)
+    temp_data <- meta_norm_nobs(ME_sig_Z,ME_sig_Nobs,i)
+    list_z[[i]] <- temp_data[[1]]
+    list_pval[[i]] <- temp_data[[2]]
+  }
+  list_z_df <- data.frame(do.call("cbind",list_z))
+  colnames(list_z_df) <- colnames(p_Data_split[[1]])
+  list_pval_df <- data.frame(do.call("cbind",list_pval))
+  colnames(list_pval_df) <- colnames(p_Data_split[[1]])
+  return(list(list_z_df,list_pval_df))
+}
