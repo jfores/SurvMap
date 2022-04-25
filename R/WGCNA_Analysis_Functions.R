@@ -217,3 +217,26 @@ prepare_data_stouffer_p_val <- function(p_Data_split,ME_sig_Z,ME_sig_Nobs){
   colnames(list_pval_df) <- colnames(p_Data_split[[1]])
   return(list(list_z_df,list_pval_df))
 }
+
+#' create_data_frame_from_multi
+#'
+#' @param vec_to_trans
+#' @param row_names
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' create_data_frame_from_multi(vec_to_trans,row_names)
+#' }
+create_data_frame_from_multi <- function(vec_to_trans,row_names){
+  values_vec <- unique(vec_to_trans)[order(unique(vec_to_trans))]
+  df_data <- data.frame(matrix(0,nrow = length(vec_to_trans),ncol = length(values_vec)))
+  for(i in 1:length(values_vec)){
+    df_data[vec_to_trans %in% values_vec[i],i] <- 1
+  }
+  colnames(df_data) <- values_vec
+  rownames(df_data) <- row_names
+  return(df_data)
+}
