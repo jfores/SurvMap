@@ -273,7 +273,7 @@ create_multi_expressoin_object <- function(test_splitted){
 #' \dontrun{
 #' module_enrichment_analysis(tlabels)
 #' }
-module_enrichment_analysis <- function(labels){
+module_enrichment_analysis <- function(labels,type_of_test = c("weight01","classic")){
   require(topGO)
   list_enrichment_out <- list()
   # Get background genes.
@@ -294,13 +294,13 @@ module_enrichment_analysis <- function(labels){
     geneList=factor(as.integer(bg_genes %in% candidate_list))
     names(geneList)= bg_genes
     # Generating topGO object
-    GOdata= new('topGOdata', ontology='BP', allGenes = geneList, annot = topGO::annFUN.gene2GO, gene2GO = gene_2_GO)
+    GOdata= new('topGOdata', ontology='BP', allGenes = geneList, annot = topGO::annFUN.gene2GO, gene2GO = gene_2_GO,nodeSize = 10)
     # Running topGO
-    weight_fisher_result=topGO::runTest(GOdata, algorithm='weight01', statistic='fisher')
+    weight_fisher_result=topGO::runTest(GOdata, algorithm=type_of_test, statistic='fisher')
     # Formatting results table.
     allGO=usedGO(GOdata)
     all_res=topGO::GenTable(GOdata, weightFisher=weight_fisher_result, orderBy='weightFisher', topNodes=length(allGO))
-    p.adj=round(p.adjust(all_res$weightFisher,method="BH"),digits = 4)
+    p.adj=p.adjust(all_res$weightFisher,method="BH")
     # create the file with all the statistics from GO analysis
     all_res_final=cbind(all_res,p.adj)
     all_res_final=all_res_final[order(all_res_final$p.adj),]

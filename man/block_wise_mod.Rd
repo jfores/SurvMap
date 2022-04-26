@@ -4,7 +4,13 @@
 \alias{block_wise_mod}
 \title{block_wise_mod}
 \usage{
-block_wise_mod(list_exp, powers)
+block_wise_mod(
+  list_exp,
+  powers,
+  mergeCutHeight = 0.25,
+  deepSplit = 3,
+  consensusQuantile = 0.25
+)
 }
 \arguments{
 \item{list_exp}{list containing gene expressoin datasets.}
