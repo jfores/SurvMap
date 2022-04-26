@@ -259,3 +259,52 @@ create_multi_expressoin_object <- function(test_splitted){
   }
   return(multiExpr)
 }
+
+#' module_enrichment_analysis
+#'
+#' Performs enrichment analysis for WGCNA results.
+#'
+#' @param labels a vector containing the node to which each gene is assigend.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' module_enrichment_analysis(tlabels)
+#' }
+module_enrichment_analysis <- function(labels){
+  list_enrichment_out <- list()
+  # Get background genes.
+  bg_genes <- names(labels)
+  # Get unique modules.
+  vec_mods <- unique(labels)[order(unique(labels))]
+  # Retrieve GO annotations from biomart
+  db= biomaRt::useMart('ENSEMBL_MART_ENSEMBL',dataset='hsapiens_gene_ensembl',host="www.ensembl.org")
+  go_ids= biomaRt::getBM(attributes=c('go_id', 'external_gene_name', 'namespace_1003'), filters='external_gene_name',values=bg_genes, mart=db)
+  # Carry out analysis for each node.
+  gene_2_GO=unstack(go_ids[,c(1,2)])
+  for(i in 1:length(vec_mods)){
+    print(paste("Carrying out enrichment for module: ",i, sep=""))
+    candidate_list <- names(labels[labels == vec_mods[i]])
+    keep = candidate_list %in% go_ids[,2]
+    keep =which(keep==TRUE)
+    candidate_list=candidate_list[keep]
+    geneList=factor(as.integer(bg_genes %in% candidate_list))
+    names(geneList)= bg_genes
+    # Generating topGO object
+    GOdata=new('topGOdata', ontology='BP', allGenes = geneList, annot = annFUN.gene2GO, gene2GO = gene_2_GO)
+    # Running topGO
+    weight_fisher_result=topGO::runTest(GOdata, algorithm='weight01', statistic='fisher')
+    # Formatting results table.
+    allGO=usedGO(GOdata)
+    all_res=topGO::GenTable(GOdata, weightFisher=weight_fisher_result, orderBy='weightFisher', topNodes=length(allGO))
+    p.adj=round(p.adjust(all_res$weightFisher,method="BH"),digits = 4)
+    # create the file with all the statistics from GO analysis
+    all_res_final=cbind(all_res,p.adj)
+    all_res_final=all_res_final[order(all_res_final$p.adj),]
+    list_enrichment_out[[i]] <- all_res_final
+  }
+  names(list_enrichment_out) <- paste("Mod_",vec_mods,sep = "")
+  return(list_enrichment_out)
+}

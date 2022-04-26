@@ -15,6 +15,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2
 Imports: 
     base,
+    biomaRt,
     circlize,
     cluster,
     ComplexHeatmap,
@@ -27,6 +28,7 @@ Imports:
     stats,
     survival,
     survminer,
+    topGO,
     utils,
     visNetwork,
     WGCNA
