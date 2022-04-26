@@ -293,6 +293,7 @@ module_enrichment_analysis <- function(labels){
     geneList=factor(as.integer(bg_genes %in% candidate_list))
     names(geneList)= bg_genes
     # Generating topGO object
+    #GOBPTerm <- topGO:::GOBP
     GOdata= new('topGOdata', ontology='BP', allGenes = geneList, annot = topGO::annFUN.gene2GO, gene2GO = gene_2_GO)
     # Running topGO
     weight_fisher_result=topGO::runTest(GOdata, algorithm='weight01', statistic='fisher')
