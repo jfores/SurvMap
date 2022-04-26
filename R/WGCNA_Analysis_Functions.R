@@ -280,7 +280,7 @@ module_enrichment_analysis <- function(labels){
   # Get unique modules.
   vec_mods <- unique(labels)[order(unique(labels))]
   # Retrieve GO annotations from biomart
-  db= biomaRt::useMart('ENSEMBL_MART_ENSEMBL',dataset='hsapiens_gene_ensembl',host="www.ensembl.org")
+  db= biomaRt::useMart('ENSEMBL_MART_ENSEMBL',dataset='hsapiens_gene_ensembl',host="https://www.ensembl.org")
   go_ids= biomaRt::getBM(attributes=c('go_id', 'external_gene_name', 'namespace_1003'), filters='external_gene_name',values=bg_genes, mart=db)
   # Carry out analysis for each node.
   gene_2_GO=unstack(go_ids[,c(1,2)])
