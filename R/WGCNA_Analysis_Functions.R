@@ -150,13 +150,13 @@ select_powers <- function(power_tables){
 #' \dontrun{
 #' block_wise_mod(list_exp, powers)
 #' }
-block_wise_mod <- function(list_exp, powers){
+block_wise_mod <- function(list_exp, powers, mergeCutHeight = 0.25,deepSplit = 3,consensusQuantile = 0.25){
   WGCNA::allowWGCNAThreads()
   multiExpr = list()
   for( i in 1:length(list_exp)){
     multiExpr[[i]]<- list(data = list_exp[[i]])
   }
-  mods <- WGCNA::blockwiseConsensusModules(multiExpr, maxBlockSize = 30000, corType = "bicor", power = powers, networkType = "signed hybrid", TOMDenom = "mean", checkMissingData = FALSE, deepSplit = 3, reassignThresholdPS = 0, pamRespectsDendro = FALSE, mergeCutHeight = 0.25, numericLabels = TRUE, getTOMScalingSamples = TRUE, consensusQuantile = 0.25, verbose = 3, indent = 2)
+  mods <- WGCNA::blockwiseConsensusModules(multiExpr, maxBlockSize = 30000, corType = "bicor", power = powers, networkType = "signed hybrid", TOMDenom = "mean", checkMissingData = FALSE, deepSplit = deepSplit, reassignThresholdPS = 0, pamRespectsDendro = FALSE, mergeCutHeight = mergeCutHeight, numericLabels = TRUE, getTOMScalingSamples = TRUE, consensusQuantile = consensusQuantile, verbose = 3, indent = 2)
   return(mods)
 }
 
