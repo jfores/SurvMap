@@ -7,7 +7,9 @@
 create_data_frame_from_multi(vec_to_trans, row_names)
 }
 \arguments{
-\item{row_names}{}
+\item{vec_to_trans}{vector of covariate with more than 2 values.}
+
+\item{row_names}{rownames of the original dataframe}
 }
 \value{
 

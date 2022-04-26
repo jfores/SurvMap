@@ -220,8 +220,8 @@ prepare_data_stouffer_p_val <- function(p_Data_split,ME_sig_Z,ME_sig_Nobs){
 
 #' create_data_frame_from_multi
 #'
-#' @param vec_to_trans
-#' @param row_names
+#' @param vec_to_trans vector of covariate with more than 2 values.
+#' @param row_names rownames of the original dataframe
 #'
 #' @return
 #' @export
@@ -274,6 +274,7 @@ create_multi_expressoin_object <- function(test_splitted){
 #' module_enrichment_analysis(tlabels)
 #' }
 module_enrichment_analysis <- function(labels){
+  require(topGO)
   list_enrichment_out <- list()
   # Get background genes.
   bg_genes <- names(labels)
@@ -293,7 +294,6 @@ module_enrichment_analysis <- function(labels){
     geneList=factor(as.integer(bg_genes %in% candidate_list))
     names(geneList)= bg_genes
     # Generating topGO object
-    #GOBPTerm <- topGO:::GOBP
     GOdata= new('topGOdata', ontology='BP', allGenes = geneList, annot = topGO::annFUN.gene2GO, gene2GO = gene_2_GO)
     # Running topGO
     weight_fisher_result=topGO::runTest(GOdata, algorithm='weight01', statistic='fisher')
