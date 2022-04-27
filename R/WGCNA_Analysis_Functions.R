@@ -306,6 +306,6 @@ module_enrichment_analysis <- function(labels,type_of_test = c("weight01","class
     all_res_final=all_res_final[order(all_res_final$p.adj),]
     list_enrichment_out[[i]] <- all_res_final
   }
-  names(list_enrichment_out) <- paste("Mod_",vec_mods,sep = "")
+  names(list_enrichment_out) <- paste("ME",vec_mods,sep = "")
   return(list_enrichment_out)
 }
