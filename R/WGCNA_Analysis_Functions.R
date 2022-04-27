@@ -309,3 +309,29 @@ module_enrichment_analysis <- function(labels,type_of_test = c("weight01","class
   names(list_enrichment_out) <- paste("ME",vec_mods,sep = "")
   return(list_enrichment_out)
 }
+
+#' filt_fun_enrich
+#'
+#' Filter module enrichment analysis results.
+#'
+#' @param x enrichment list output.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' filt_fun_enrich(x)
+#' }
+filt_fun_enrich <- function(x){
+  selected <- c()
+  for(i in 1:length(x)){
+    print(i)
+    try({
+      if(class(x[[i]]) == "data.frame" & min(x[[i]][,"p.adj"],na.rm = TRUE) < 0.05){
+        selected <- c(selected,i)
+      }
+    })
+  }
+  return(x[selected])
+}
