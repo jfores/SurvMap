@@ -15,7 +15,7 @@ compute_power_tables <- function(list_datasets){
   powers = c(seq(2, 20, by=1))
   powerTables = vector(mode = "list", length = length(list_datasets))
   for (set in 1:length(list_datasets)){
-    powerTables[[set]] = list(data = WGCNA::pickSoftThreshold(list_datasets[[set]], powerVector=powers, corFnc = "bicor", networkType = "signed hybrid", blockSize = 10000, verbose = 2 )[[2]])
+    powerTables[[set]] = list(data = WGCNA::pickSoftThreshold(list_datasets[[set]], powerVector=powers, corFnc = "bicor", networkType = "signed hybrid", blockSize = 30000, verbose = 2 )[[2]])
   }
   names(powerTables) <- names(list_datasets)
   return(powerTables)
