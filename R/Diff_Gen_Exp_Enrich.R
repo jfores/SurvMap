@@ -215,3 +215,45 @@ perform_GSVA_dataset <- function(expression,surv_Map_Out,path_to_gmt_file,thr_gr
 axuiliar_function_to_mean <- function(x,y){
   return(tapply(x,y,mean))
 }
+
+#' format_results
+#'
+#' Formats the differential gene expression results from perform_wilcoxon_each to write into an excel file.
+#'
+#' @param rsults results from the
+#'
+#' @return
+#' @export
+#'
+#' @examples
+format_results <- function(rsults){
+  for(i in 1:length(rsults)){
+    rsults_temp <- rsults[[i]]
+    for(j in 1:ncol(rsults_temp)){
+      rsults_temp[,j] <- as.numeric(formatC(as.numeric(rsults_temp[,j]),digits = 2,format = "E"))
+    }
+    rsults[[i]] <- rsults_temp
+  }
+  return(rsults)
+}
+
+#' write_results
+#'
+#' @param formated_res formatted results derived from the format_results function.
+#' @param file_name_path path and file to save data.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+write_results <- function(formated_res,file_name_path = "/media/data/jaume/BreastCancer/Analysis_Mapper_2/Markers_B.xlsx"){
+  OUT <- openxlsx::createWorkbook()
+  for(i in 1:length(formated_res)){
+    openxlsx::addWorksheet(OUT, names(formated_res)[i])
+  }
+  for(i in 1:length(formated_res)){
+    openxlsx::writeData(OUT, sheet = names(formated_res)[i], x = formated_res[[i]],rowNames = TRUE)
+  }
+  openxlsx::saveWorkbook(OUT, file_name_path)
+}
+
