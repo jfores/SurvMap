@@ -122,7 +122,7 @@ create_output_df_unique_node <- function(out_one_D,exp_filt){
     }else{
       cor_vec <- c()
       for(j in 1:nrow(sample_in_nodes)){
-        cor_vec <- c(cor_vec,cor(exp_filt[,final_out[i,1]],principal_components[,sample_in_nodes[j,1]]))
+        cor_vec <- c(cor_vec,cor(scale(exp_filt[,final_out[i,1]]),principal_components[,sample_in_nodes[j,1]]))
         #cor_vec <- data.frame(cor_vec)
       }
       df_cor <- data.frame(sample_in_nodes[,1],cor_vec)
