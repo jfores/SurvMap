@@ -53,7 +53,7 @@ generate_not_ov_clust <- function(out_one_D,exp_filt){
     }else if(length(temp_samps) > 1){
       pc_1 <- stats::prcomp(t(exp_filt[,temp_samps]),center = TRUE)
       pc_1 <- pc_1$rotation[,1]
-      av_exp_vec <- apply(scale(x),1,mean)
+      av_exp_vec <- apply(scale(exp_filt[,temp_samps]),1,mean)
       if(cor(pc_1,av_exp_vec) < 0){
         pc_1 <- -pc_1
       }
