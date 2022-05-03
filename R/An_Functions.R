@@ -51,9 +51,9 @@ generate_not_ov_clust <- function(out_one_D,exp_filt){
       pc_1 <- exp_filt[,temp_samps]
       list_pc1[[i]] <- pc_1
     }else if(length(temp_samps) > 1){
-      pc_1 <- stats::prcomp(t(exp_filt[,temp_samps]),center = TRUE,scale. = TRUE)
+      pc_1 <- stats::prcomp(t(exp_filt[,temp_samps]),center = FALSE,scale. = TRUE)
       pc_1 <- pc_1$rotation[,1]
-      av_exp_vec <- scale(apply(exp_filt[,temp_samps],1,mean))
+      av_exp_vec <- scale(apply(exp_filt[,temp_samps],1,mean),center = FALSE,scale = TRUE)
       if(cor(pc_1,av_exp_vec) < 0){
         pc_1 <- -pc_1
       }
@@ -122,7 +122,7 @@ create_output_df_unique_node <- function(out_one_D,exp_filt){
     }else{
       cor_vec <- c()
       for(j in 1:nrow(sample_in_nodes)){
-        cor_vec <- c(cor_vec,cor(scale(exp_filt[,final_out[i,1]], center = TRUE, scale = TRUE),principal_components[,sample_in_nodes[j,1]]))
+        cor_vec <- c(cor_vec,cor(scale(exp_filt[,final_out[i,1]], center = FALSE, scale = TRUE),principal_components[,sample_in_nodes[j,1]]))
         #cor_vec <- data.frame(cor_vec)
       }
       df_cor <- data.frame(sample_in_nodes[,1],cor_vec)
