@@ -127,6 +127,7 @@ create_output_df_unique_node <- function(out_one_D,exp_filt){
       }
       df_cor <- data.frame(sample_in_nodes[,1],cor_vec)
       colnames(df_cor) <- c("Node","Cor")
+      print(df_cor)
       selected <- df_cor[which.max(df_cor[,2]),1]
       final_out[i,2] <- selected
       #print(selected)
