@@ -51,8 +51,12 @@ generate_not_ov_clust <- function(out_one_D,exp_filt){
       pc_1 <- exp_filt[,temp_samps]
       list_pc1[[i]] <- pc_1
     }else if(length(temp_samps) > 1){
-      pc_1 <- stats::prcomp(t(exp_filt[,temp_samps]))
+      pc_1 <- stats::prcomp(t(exp_filt[,temp_samps]),center = TRUE)
       pc_1 <- pc_1$rotation[,1]
+      av_exp_vec <- apply(scale(x),1,mean)
+      if(cor(pc_1,av_exp_vec) < 0){
+        pc_1 <- -pc_1
+      }
       list_pc1[[i]] <- pc_1
     }
   }
