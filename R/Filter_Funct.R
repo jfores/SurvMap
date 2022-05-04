@@ -44,6 +44,10 @@ lp_norm_k_powers_surv <- function(exp_matrix,p,k,cox_data){
     cox_vector <- cox_data[rownames(exp_matrix),"z"]
     print(length(cox_vector))
     print(dim(exp_matrix))
+    exp_matrix[exp_matrix < 0] <- exp_matrix[exp_matrix < 0] - 1
+    exp_matrix[exp_matrix > 0] <- exp_matrix[exp_matrix > 0] + 1
+    cox_vector[cox_vector < 0] <- cox_vector[cox_vector < 0] - 1
+    cox_vector[cox_vector > 0] <- cox_vector[cox_vector < 0] + 1
     exp_matrix <- exp_matrix * cox_vector
     lp_norm <- apply(exp_matrix,2,function(x) (sum(abs(x)^p)^(k/p)))
     return(lp_norm)
