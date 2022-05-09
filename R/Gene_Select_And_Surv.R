@@ -172,6 +172,9 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
     print("Printing named group colors: ")
     print(group_colors)
     print("Selecting nodes: ")
+    p_merged$unique_cluster <- factor(p_merged$unique_cluster,levels = names_for_group_colors)
+    p_merged <- p_merged[p_merged$pCh_Status == "T",]
+    p_merged <- p_merged[!(is.na(p_merged$pCh_DFS_E) | is.na(p_merged$pCh_DFS_T)),]
     selected_nodes <- names(table(p_merged$unique_cluster) > thr_groups)[table(p_merged$unique_cluster) > thr_groups]
     p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
     p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
@@ -180,7 +183,6 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
     print("Printing group colors for the selected nodes: ")
     print(group_colors)
     p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes_2,]
-    p_merged$unique_cluster <- factor(p_merged$unique_cluster,levels = names_for_group_colors)
     p_merged <<- p_merged
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
     surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
