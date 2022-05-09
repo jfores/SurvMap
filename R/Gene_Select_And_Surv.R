@@ -155,9 +155,8 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$unique_cluster)
   }else if(type == "pam"){
-
     group_colors <- ggplotColours(length(unique(p_merged$pam50_frma)))
-    names(group_colors) <- unique(p_merged$pam50_frma)
+    names(group_colors) <- c("Normal","LumA","LumB","Basal","Her2")
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$pam50_frma)
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$pam50_frma)
   }
