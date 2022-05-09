@@ -159,3 +159,79 @@ percent_table <- function(vec_1,vec_2){
   print(col_summed)
   return(t(t(table_vals)/col_summed*100))
 }
+
+#' compute_u_mat_and_eigen
+#'
+#' Computes the matrix U and the singular values for a subset of samples placed in a node.
+#'
+#' @param dis_comp_node Subset of the disease component matrix.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' compute_u_mat_and_eigen(dis_comp_node)
+#' }
+compute_u_mat_and_eigen <- function(dis_comp_node){
+  C <- dis_comp_node%*%t(dis_comp_node)
+  C <- (1/sum(diag(C)))*C
+  base <- svd(C)$u
+  eigen_values <- svd(C)$d
+  return(list(base,eigen_values))
+}
+
+#' assign_promiscuous_samples
+#'
+#' Assigns promiscuous samples to unique nodes.
+#'
+#' @param out_one_D Output from one_D_Mapper function.
+#' @param Dis_Comp_Data Disease component matrix.
+#'
+#' @return
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' assign_promiscuous_samples(out_one_D,Dis_Comp_Data)
+#' }
+assign_promiscuous_samples <- function(out_one_D,Dis_Comp_Data){
+  samples_in_nodes <- out_one_D$node_samples
+  list_Dis_Comp_Data_Node <- list()
+  for(i in 1:length(samples_in_nodes)){
+    list_Dis_Comp_Data_Node[[i]] <- Dis_Comp_Data[,samples_in_nodes[[i]]]
+  }
+  names(list_Dis_Comp_Data_Node) <- names(samples_in_nodes)
+  u_mat_and_eigen_vals <- lapply(list_Dis_Comp_Data_Node,compute_u_mat_and_eigen)
+  names(u_mat_and_eigen_vals) <- names(samples_in_nodes)
+  struct_out <- generate_df_samp_to_node(out_one_D)
+  final_out <- data.frame(unique(struct_out[,2]),rep(NA,length(unique(struct_out[,2]))))
+  colnames(final_out) <- c("sample","unique_cluster")
+  for(i in 1:nrow(final_out)){
+    sample_to_nodes <- struct_out[struct_out[,2] %in% final_out[i,1],,drop = FALSE]
+    if(nrow(sample_to_nodes) == 1){
+      final_out[i,2] <- sample_to_nodes[,1]
+    }else{
+      prob_vectors <- c()
+      for(j in 1:nrow(sample_to_nodes)){
+        vector_to_test <- Dis_Comp_Data[,final_out[i,1]]
+        print(sample_to_nodes[j,1])
+        u_mat_temp <- u_mat_and_eigen_vals[[sample_to_nodes[j,1]]][[1]]
+        eigen_vec_temp <- u_mat_and_eigen_vals[[sample_to_nodes[j,1]]][[2]]
+        vector_to_test <- vector_to_test/sqrt(sum(vector_to_test^2))
+        n_vector_to_test <- t(u_mat_temp)%*%vector_to_test
+        prob <- sum(n_vector_to_test^2*eigen_vec_temp)
+        print(prob)
+        prob_vectors <- c(prob_vectors,prob)
+      }
+      df_probs <- data.frame(sample_to_nodes[,1],prob_vectors)
+      colnames(df_probs) <- c("Node","Cor")
+      selected <- df_probs[which.max(df_probs[,2]),1]
+      final_out[i,2] <- selected
+    }
+  }
+  return(final_out)
+}
+
+
+
