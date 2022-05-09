@@ -135,32 +135,75 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged <- merge(pheno_data,univoq_group,by.x = 1,by.y = 1 )
   p_merged <- p_merged[p_merged$pCh_Status == "T",]
   p_merged <- p_merged[!(is.na(p_merged$pCh_DFS_E) | is.na(p_merged$pCh_DFS_T)),]
-  selected_nodes <- names(table(p_merged$unique_cluster) > thr_groups)[table(p_merged$unique_cluster) > thr_groups]
-  p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
-  p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
-  p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
-  #p_merged <- p_merged
-  group_data_ord <- unique(p_merged$unique_cluster)[as.numeric(unique(gsub("Node_","",p_merged$unique_cluster)))]
-  if(! c("") %in%selected_nodes_2){
-    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes_2,]
-    group_colors <- group_colors[names(group_colors) %in% selected_nodes_2]
-    print(group_colors)
-  }
-  p_merged <<- p_merged
-  surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
+
   if(type == "node"){
-    group_colors <- ggplotColours(length(group_data_ord))
-    names(group_colors) <- group_data_ord
+    group_colors <- ggplotColours(length(unique(p_merged$unique_cluster)))
+    print("Printing group colors: ")
     print(group_colors)
+    names_for_group_colors <- unique(p_merged$unique_cluster)[order(as.numeric(unique(gsub("Node_","",p_merged$unique_cluster))))]
+    print("Printing names for group colors: ")
+    print(names_for_group_colors)
+    names(group_colors) <- names_for_group_colors
+    print("Printing named group colors: ")
+    print(group_colors)
+    print("Selecting nodes: ")
+    selected_nodes <- names(table(p_merged$unique_cluster) > thr_groups)[table(p_merged$unique_cluster) > thr_groups]
+    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
+    p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
+    p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
+    group_colors <- group_colors[selected_nodes]
+    p_merged$unique_cluster <- factor(p_merged$unique_cluster,levels = names_for_group_colors)
+    p_merged <<- p_merged
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
+    surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$unique_cluster)
-  }else if(type == "pam"){
+    plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val,color = "unique_cluster",palette = unname(group_colors))
+  }
+
+  else if(type == "node_sub"){
+    group_colors <- ggplotColours(length(unique(p_merged$unique_cluster)))
+    print("Printing group colors: ")
+    print(group_colors)
+    names_for_group_colors <- unique(p_merged$unique_cluster)[order(as.numeric(unique(gsub("Node_","",p_merged$unique_cluster))))]
+    print("Printing names for group colors: ")
+    print(names_for_group_colors)
+    names(group_colors) <- names_for_group_colors
+    print("Printing named group colors: ")
+    print(group_colors)
+    print("Selecting nodes: ")
+    selected_nodes <- names(table(p_merged$unique_cluster) > thr_groups)[table(p_merged$unique_cluster) > thr_groups]
+    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
+    p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
+    p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
+    group_colors <- group_colors[selected_nodes_2]
+    print("Printing group colors for the selected nodes: ")
+    print(group_colors)
+    p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes_2,]
+    p_merged$unique_cluster <- factor(p_merged$unique_cluster,levels = names_for_group_colors)
+    p_merged <<- p_merged
+    fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
+    surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
+    log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$unique_cluster)
+    plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val,color = "unique_cluster",palette = unname(group_colors))
+  }
+
+  else if(type == "pam"){
     group_colors <- ggplotColours(length(unique(p_merged$pam50_frma)))
     names(group_colors) <- c("Normal","LumA","LumB","Basal","Her2")
+
+
+    p_merged <- p_merged[p_merged$pam50_frma %in% c("Normal","LumA","LumB","Basal","Her2"),]
+    p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
+    p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
+    p_merged$pam50_frma <- factor(p_merged$pam50_frma,levels = c("Normal", "LumA", "LumB","Basal","Her2"))
+    p_merged <<- p_merged
+
+
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$pam50_frma)
+    surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$pam50_frma)
+    plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val,color = "pam50_frma",palette = unname(group_colors))
   }
-  plot_out <- survminer::ggsurvplot(fit = fit,data = p_merged, pval = TRUE, surv.median.line = "hv", xlab = "Survival time", ylab = "Survival probability",ylim = ylim_val,xlim = xlim_val,palette = unname(group_colors))
   p_merged_temp <- p_merged
   rm(list = "p_merged",envir = globalenv())
   return(list(fit,p_merged_temp,surv,plot_out,log_rank_test))
