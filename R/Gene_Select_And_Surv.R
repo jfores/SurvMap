@@ -133,8 +133,7 @@ get_survival_related_genes <- function(cox_all,percent = c(0.05,0.95)){
 surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups = 50,ylim_val = c(0.5, 1),xlim_val =  c(0,200),type = "node",selected_nodes_2 = ""){
   univoq_group <- out_one_D$Unique_Samp_Node
   p_merged <- merge(pheno_data,univoq_group,by.x = 1,by.y = 1 )
-  p_merged <- p_merged[p_merged$pCh_Status == "T",]
-  p_merged <- p_merged[!(is.na(p_merged$pCh_DFS_E) | is.na(p_merged$pCh_DFS_T)),]
+
 
   if(type == "node"){
     group_colors <- ggplotColours(length(unique(p_merged$unique_cluster)))
@@ -147,12 +146,14 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
     print("Printing named group colors: ")
     print(group_colors)
     print("Selecting nodes: ")
+    p_merged$unique_cluster <- factor(p_merged$unique_cluster,levels = names_for_group_colors)
+    p_merged <- p_merged[p_merged$pCh_Status == "T",]
+    p_merged <- p_merged[!(is.na(p_merged$pCh_DFS_E) | is.na(p_merged$pCh_DFS_T)),]
     selected_nodes <- names(table(p_merged$unique_cluster) > thr_groups)[table(p_merged$unique_cluster) > thr_groups]
     p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
     p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
     p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
     group_colors <- group_colors[selected_nodes]
-    p_merged$unique_cluster <- factor(p_merged$unique_cluster,levels = names_for_group_colors)
     p_merged <<- p_merged
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
     surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
