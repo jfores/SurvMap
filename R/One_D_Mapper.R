@@ -19,11 +19,17 @@ get_intervals_One_D <- function(dis_st_mod,filt_vector,n_int,p){
   l_int <- range_filt/(n_int - (n_ov*p))
   p_int <- p*l_int
   list_int <- list()
-  list_int[[1]] <- c(min(filt_vector),min(filt_vector + l_int))
+  list_int[[1]] <- c(min(filt_vector)-0.1,min(filt_vector + l_int))
   names(list_int)[1] <- "Level_1"
   for(i in 2:n_int){
-    list_int[[i]] <- c(list_int[[i-1]][2]-p_int,list_int[[i-1]][2]-p_int + l_int)
-    names(list_int)[i] <- paste("Level_",i,sep ="")
+    if(i < n_int){
+      list_int[[i]] <- c(list_int[[i-1]][2]-p_int,list_int[[i-1]][2]-p_int + l_int)
+      names(list_int)[i] <- paste("Level_",i,sep ="")
+    }
+    else if(i == n_int){
+      list_int[[i]] <- c(list_int[[i-1]][2]-p_int,list_int[[i-1]][2]-p_int + l_int + 0.1)
+      names(list_int)[i] <- paste("Level_",i,sep ="")
+    }
   }
   return(list_int)
 }
