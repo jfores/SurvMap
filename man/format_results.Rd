@@ -15,3 +15,8 @@ format_results(rsults)
 \description{
 Formats the differential gene expression results from perform_wilcoxon_each to write into an excel file.
 }
+\examples{
+\dontrun{
+format_results(rsults)
+}
+}

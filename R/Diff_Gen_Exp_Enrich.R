@@ -226,6 +226,9 @@ axuiliar_function_to_mean <- function(x,y){
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' format_results(rsults)
+#' }
 format_results <- function(rsults){
   for(i in 1:length(rsults)){
     rsults_temp <- rsults[[i]]
@@ -246,6 +249,9 @@ format_results <- function(rsults){
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' write_results(formated_res,file_name_path = "/media/data/jaume/BreastCancer/Analysis_Mapper_2/Markers_B.xlsx")
+#' }
 write_results <- function(formated_res,file_name_path = "/media/data/jaume/BreastCancer/Analysis_Mapper_2/Markers_B.xlsx"){
   OUT <- openxlsx::createWorkbook()
   for(i in 1:length(formated_res)){

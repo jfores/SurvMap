@@ -20,3 +20,8 @@ write_results(
 \description{
 write_results
 }
+\examples{
+\dontrun{
+write_results(formated_res,file_name_path = "/media/data/jaume/BreastCancer/Analysis_Mapper_2/Markers_B.xlsx")
+}
+}

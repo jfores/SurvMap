@@ -139,11 +139,8 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes,]
   p_merged$pCh_DFS_T <- as.numeric(p_merged$pCh_DFS_T)
   p_merged$pCh_DFS_E <- as.numeric(p_merged$pCh_DFS_E)
-  p_merged <- p_merged
-  group_data_ord <- unique(p_merged$unique_cluster)[order(unique(p_merged$unique_cluster))]
-  group_colors <- ggplotColours(length(group_data_ord))
-  names(group_colors) <- group_data_ord
-  print(group_colors)
+  #p_merged <- p_merged
+  group_data_ord <- unique(p_merged$unique_cluster)[as.numeric(unique(gsub("Node_","",p_merged$unique_cluster)))]
   if(! c("") %in%selected_nodes_2){
     p_merged <- p_merged[p_merged$unique_cluster %in% selected_nodes_2,]
     group_colors <- group_colors[names(group_colors) %in% selected_nodes_2]
@@ -152,9 +149,15 @@ surivival_analysis_multiple_groups <- function(pheno_data,out_one_D,thr_groups =
   p_merged <<- p_merged
   surv = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E))
   if(type == "node"){
+    group_colors <- ggplotColours(length(group_data_ord))
+    names(group_colors) <- group_data_ord
+    print(group_colors)
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$unique_cluster)
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$unique_cluster)
   }else if(type == "pam"){
+
+    group_colors <- ggplotColours(length(unique(p_merged$pam50_frma)))
+    names(group_colors) <- unique(p_merged$pam50_frma)
     fit <- survival::survfit(survival::Surv(time = p_merged$pCh_DFS_T, event = p_merged$pCh_DFS_E)~p_merged$pam50_frma)
     log_rank_test <- survival::survdiff(formula = survival::Surv(time = as.numeric(p_merged$pCh_DFS_T), event = as.numeric(p_merged$pCh_DFS_E)) ~ p_merged$pam50_frma)
   }
