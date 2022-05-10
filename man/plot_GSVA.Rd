@@ -4,12 +4,14 @@
 \alias{plot_GSVA}
 \title{plot_GSVA}
 \usage{
-plot_GSVA(GSVA_res, row_text_size = 10)
+plot_GSVA(GSVA_res, row_text_size = 10, selected_nodes)
 }
 \arguments{
 \item{GSVA_res}{list containing the output from the perform_GSVA_dataset function.}
 
 \item{row_text_size}{size of the row labels.}
+
+\item{selected_nodes}{Nodes to plot.}
 }
 \value{
 

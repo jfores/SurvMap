@@ -185,20 +185,23 @@ plot_heatmap_data <- function(out_wilc,selected_genes,out_one_D,exp_data,row_tex
 #'
 #' @param GSVA_res list containing the output from the perform_GSVA_dataset function.
 #' @param row_text_size size of the row labels.
-#'
+#' @param selected_nodes Nodes to plot.
+
 #' @return
 #' @export
 #'
 #' @examples
 #' \dontrun{
 #' plot_GSVA(GSVA_res,row_text_size = 10)}
-plot_GSVA <- function(GSVA_res,row_text_size = 10){
+plot_GSVA <- function(GSVA_res,row_text_size = 10,selected_nodes){
   GSVA_res <- GSVA_res[[2]]
-  group_data_ord <- colnames(GSVA_res)[order(colnames(GSVA_res))]
+  group_data_ord <- colnames(GSVA_res)[order(as.numeric(gsub("Node_","",colnames(GSVA_res))))]
   group_colors <- ggplotColours(length(group_data_ord))
   names(group_colors) <- group_data_ord
   print(group_data_ord)
   print(group_colors)
+  group_colors <- group_colors[selected_nodes]
+  GSVA_res <- GSVA_res[,selected_nodes]
   ha = ComplexHeatmap::HeatmapAnnotation(Paths =colnames(GSVA_res), col = list(Paths = group_colors))
   col_fun = circlize::colorRamp2(c(min(GSVA_res), 0, max(GSVA_res)), c("red", "black", "green"))
   ComplexHeatmap::draw(ComplexHeatmap::Heatmap(GSVA_res,cluster_columns = F,col = col_fun,top_annotation = ha,cluster_rows = T,row_names_gp = grid::gpar(fontsize = row_text_size),column_names_gp = grid::gpar(fontsize = 0)))
