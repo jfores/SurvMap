@@ -28,7 +28,7 @@ perform_wilcoxon_each <- function(exp_data,pheno_data,surv_map_res,thr_groups = 
     samples_not_in_group <- p_merged[!p_merged$pCh_Sample_Name %in% samples_in_group,"pCh_Sample_Name"]
     exp_data_filt <- exp_data[,c(samples_in_group,samples_not_in_group)]
     factor_to_comp <- c(rep(0,length(samples_in_group)),rep(1,length(samples_not_in_group)))
-    out_results[[i]] <- GSALightning::wilcoxTest(exp_data_filt,as.factor(factor_to_comp))
+    out_results[[i]] <- GSALightning::wilcoxTest(eset = exp_data_filt, fac =  as.factor(factor_to_comp),tests = "unpaired")
   }
   names(out_results) <- unique_groups
   names(list_samples_in_groups) <- unique_groups
