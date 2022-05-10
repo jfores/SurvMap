@@ -113,8 +113,9 @@ plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
 
 #' plot_heatmap_data
 #'
-#' @param out_wilc object returned by the differential gene expresson function.
+#' @param out_wilc object returned by the differential gene expression function.
 #' @param selected_genes top differentially expressed genes.
+#' @param out_one_D Output of one-dimensional mapper with the the promiscuous samples assigned.
 #' @param exp_data gene expression matrix.
 #' @param row_text_size size of the row labels.
 #'
@@ -124,8 +125,7 @@ plot_genes_by_groups <- function(exp_data,genes,out_perform_wil){
 #' @examples
 #' \dontrun{
 #' plot_heatmap_data(out_wilc,selected_genes,exp_data,row_text_size = 10)}
-plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 10){
-
+plot_heatmap_data <- function(out_wilc,selected_genes,out_one_D,exp_data,row_text_size = 10){
   #Create samples in nodes data.
   list_out <- list()
   samp_in_nodes <- out_wilc[[2]]
@@ -143,10 +143,11 @@ plot_heatmap_data <- function(out_wilc,selected_genes,exp_data,row_text_size = 1
   exp_data_filt <- exp_data[,df_out[,2]]
 
   # Getting group colors.
-
-  group_data_ord <- unique(df_out[,1])[order(unique(df_out[,1]))]
-  group_colors <- ggplotColours(length(group_data_ord))
-  names(group_colors) <- group_data_ord
+  unique_nodes <- unique(out_one_D_A$Unique_Samp_Node[,2])
+  unique_nodes <- unique_nodes[order(as.numeric(gsub("Node_","",unique_nodes)))]
+  #group_data_ord <- unique(df_out[,1])[order(unique(df_out[,1]))]
+  group_colors <- ggplotColours(length(unique_nodes))
+  names(group_colors) <- unique_nodes
 
   # Create colour dataframe
 

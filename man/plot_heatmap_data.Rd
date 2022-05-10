@@ -4,12 +4,20 @@
 \alias{plot_heatmap_data}
 \title{plot_heatmap_data}
 \usage{
-plot_heatmap_data(out_wilc, selected_genes, exp_data, row_text_size = 10)
+plot_heatmap_data(
+  out_wilc,
+  selected_genes,
+  out_one_D,
+  exp_data,
+  row_text_size = 10
+)
 }
 \arguments{
-\item{out_wilc}{object returned by the differential gene expresson function.}
+\item{out_wilc}{object returned by the differential gene expression function.}
 
 \item{selected_genes}{top differentially expressed genes.}
+
+\item{out_one_D}{Output of one-dimensional mapper with the the promiscuous samples assigned.}
 
 \item{exp_data}{gene expression matrix.}
 
