@@ -143,7 +143,7 @@ plot_heatmap_data <- function(out_wilc,selected_genes,out_one_D,exp_data,row_tex
   exp_data_filt <- exp_data[,df_out[,2]]
 
   # Getting group colors.
-  unique_nodes <- unique(out_one_D_A$Unique_Samp_Node[,2])
+  unique_nodes <- unique(out_one_D$Unique_Samp_Node[,2])
   unique_nodes <- unique_nodes[order(as.numeric(gsub("Node_","",unique_nodes)))]
   #group_data_ord <- unique(df_out[,1])[order(unique(df_out[,1]))]
   group_colors <- ggplotColours(length(unique_nodes))
